@@ -1,0 +1,315 @@
+---
+title: Java
+description: Learn how to connect to Redis databases in Sailos Devbox using Java
+---
+
+This guide will walk you through the process of connecting to a Redis database using Java within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Java environment
+- [A Redis database created using the Database app in Sailos](./)
+
+## Project Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Create a new Maven project
+
+In your Sailos Devbox terminal, initialize a new Maven project:
+
+```bash
+mvn archetype:generate -DgroupId=com.example -DartifactId=redis-java-example -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+mv redis-java-example/* .
+rm -rf redis-java-example/
+```
+
+#### Project Structure
+
+After setting up, your project structure should look like this:
+
+```
+/
+├── pom.xml
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   └── com
+│   │   │       └── example
+│   │   │           ├── App.java
+│   │   │           ├── RedisConfig.java
+│   │   │           └── RedisConnection.java
+│   │   └── resources
+│   │       └── redis.properties
+│   └── test
+│       └── java
+│           └── com
+│               └── example
+│                   └── AppTest.java
+```
+
+#### Update pom.xml
+
+Replace the content of your `pom.xml` file with the following:
+
+```xml title="pom.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>redis-java-example</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>4.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.12</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.example.App</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+This `pom.xml` file includes the necessary dependencies (Jedis for Redis connectivity, SLF4J for logging) and configures the Maven Shade plugin to create an executable JAR.
+
+#### Create a configuration file
+
+Create a file named `redis.properties` in the `src/main/resources` directory:
+
+```ini title="redis.properties"
+redis.host=your_redis_host
+redis.port=6379
+redis.password=your_redis_password
+```
+
+Replace the placeholders with your actual Redis credentials from the Database app in Sailos.
+
+#### Create Java classes
+
+Create the following Java classes in the `src/main/java/com/example` directory:
+
+1. `App.java`:
+
+   ```java title="App.java"
+   package com.example;
+   
+   import redis.clients.jedis.Jedis;
+   
+   public class App {
+       public static void main(String[] args) {
+           try (Jedis jedis = RedisConnection.getConnection()) {
+               System.out.println("Connected to Redis");
+   
+               // String operations
+               jedis.set("mykey", "Hello from Sailos Devbox!");
+               String value = jedis.get("mykey");
+               System.out.println("Retrieved value: " + value);
+   
+               // List operations
+               jedis.lpush("mylist", "element1", "element2", "element3");
+               String listElement = jedis.lpop("mylist");
+               System.out.println("Popped element from list: " + listElement);
+   
+               // Hash operations
+               jedis.hset("myhash", "field1", "value1");
+               jedis.hset("myhash", "field2", "value2");
+               String hashValue = jedis.hget("myhash", "field1");
+               System.out.println("Retrieved hash value: " + hashValue);
+   
+           } catch (Exception e) {
+               System.err.println("Error connecting to Redis: " + e.getMessage());
+           } finally {
+               RedisConnection.closePool();
+           }
+       }
+   }
+   ```
+
+   This is the main class that demonstrates basic Redis operations using Jedis:
+      - It sets and gets a string value.
+      - It pushes elements to a list and pops an element.
+      - It sets and gets hash values.
+
+2. `RedisConfig.java`:
+
+   ```java title="RedisConfig.java"
+   package com.example;
+   
+   import java.io.IOException;
+   import java.io.InputStream;
+   import java.util.Properties;
+   
+   public class RedisConfig {
+       private static final Properties properties = new Properties();
+   
+       static {
+           try (InputStream input = RedisConfig.class.getClassLoader().getResourceAsStream("redis.properties")) {
+               if (input == null) {
+                   System.out.println("Sorry, unable to find redis.properties");
+                   System.exit(1);
+               }
+               properties.load(input);
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+       }
+   
+       public static String getHost() {
+           return properties.getProperty("redis.host");
+       }
+   
+       public static int getPort() {
+           return Integer.parseInt(properties.getProperty("redis.port"));
+       }
+   
+       public static String getPassword() {
+           return properties.getProperty("redis.password");
+       }
+   }
+   ```
+
+   This class loads the Redis connection details from the `redis.properties` file.
+
+3. `RedisConnection.java`:
+
+   ```java title="RedisConnection.java"
+   package com.example;
+   
+   import redis.clients.jedis.Jedis;
+   import redis.clients.jedis.JedisPool;
+   import redis.clients.jedis.JedisPoolConfig;
+   
+   public class RedisConnection {
+       private static final JedisPool pool = new JedisPool(new JedisPoolConfig(),
+               RedisConfig.getHost(),
+               RedisConfig.getPort(),
+               2000,
+               RedisConfig.getPassword());
+   
+       public static Jedis getConnection() {
+           return pool.getResource();
+       }
+   
+       public static void closePool() {
+           pool.close();
+       }
+   }
+   ```
+
+   This class manages the Redis connection pool using Jedis.
+
+4. `AppTest.java` (in `src/test/java/com/example`):
+
+   ```java title="AppTest.java"
+   package com.example;
+   
+   import static org.junit.Assert.assertTrue;
+   
+   import org.junit.Test;
+   
+   public class AppTest 
+   {
+       @Test
+       public void shouldAnswerWithTrue()
+       {
+           assertTrue( true );
+       }
+   }
+   ```
+
+</div>
+
+## Build and Run
+
+To build and run the project, use the following commands in your terminal:
+
+```bash
+mvn clean package
+java -jar target/redis-java-example-1.0-SNAPSHOT.jar
+```
+
+If everything is set up correctly, you should see output demonstrating the Redis operations.
+
+## Best Practices
+
+1. Use a properties file to store Redis connection details.
+2. Implement a configuration class to load and provide access to Redis properties.
+3. Use a connection pool for better performance and resource management.
+4. Always close Redis connections after use (or use try-with-resources as shown in the example).
+5. Handle exceptions appropriately and provide meaningful error messages.
+6. Use Maven for dependency management and build automation.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your Redis credentials in the `redis.properties` file.
+2. Ensure your Redis database is running and accessible from your Devbox environment.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that the Jedis dependency is correctly specified in your `pom.xml` file.
+5. Make sure you're using the correct version of Java (11 in this example).
+
+## Conclusion
+
+This guide provided a complete example of how to set up a Java project with Maven to connect to a Redis database in the Sailos Devbox environment. It includes all the necessary steps, from project creation to running the application, along with best practices and troubleshooting tips.
+
+For more detailed information on using Redis with Java, refer to the [Jedis GitHub repository](https://github.com/redis/jedis).

@@ -1,0 +1,148 @@
+---
+title: PHP
+description: Learn how to connect to Kafka in Sailos Devbox using PHP
+---
+
+This guide will walk you through the process of connecting to Kafka using PHP within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with PHP environment
+- [A Kafka cluster created using the Database app in Sailos](./)
+
+## Install Required Extensions
+
+In your Cursor terminal, first install the necessary system dependencies:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y librdkafka-dev
+```
+
+Then, install the Kafka extension for PHP:
+
+```bash
+sudo pecl install rdkafka
+sudo sh -c 'echo "extension=rdkafka.so" > /etc/php/*/mods-available/rdkafka.ini'
+sudo phpenmod rdkafka
+```
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Create a Configuration File
+
+First, let's create a configuration file to store our Kafka connection parameters. Create a file named `config.php` in your project directory with the following content:
+
+```php
+<?php
+return [
+    'brokers' => 'your_kafka_broker:9092',
+    'topic' => 'your_topic_name',
+    'group_id' => 'your_consumer_group_id'
+];
+```
+
+Replace the placeholders with your actual Kafka credentials from the Database app in Sailos.
+
+#### Create a Kafka Producer
+
+Create a file named `kafka_producer.php` with the following content:
+
+```php
+<?php
+$config = include 'config.php';
+
+$conf = new RdKafka\Conf();
+$conf->set('metadata.broker.list', $config['brokers']);
+
+$producer = new RdKafka\Producer($conf);
+
+$topic = $producer->newTopic($config['topic']);
+
+$message = "Hello from Sailos Devbox!";
+$topic->produce(RD_KAFKA_PARTITION_UA, 0, $message);
+
+$producer->flush(10000);
+
+echo "Message sent: $message\n";
+```
+
+This script creates a Kafka producer and sends a message to the specified topic.
+
+#### Create a Kafka Consumer
+
+Create another file named `kafka_consumer.php` with the following content:
+
+```php
+<?php
+$config = include 'config.php';
+
+$conf = new RdKafka\Conf();
+$conf->set('group.id', $config['group_id']);
+$conf->set('metadata.broker.list', $config['brokers']);
+$conf->set('auto.offset.reset', 'earliest');
+
+$consumer = new RdKafka\KafkaConsumer($conf);
+$consumer->subscribe([$config['topic']]);
+
+echo "Waiting for messages...\n";
+
+while (true) {
+    $message = $consumer->consume(120*1000);
+    switch ($message->err) {
+        case RD_KAFKA_RESP_ERR_NO_ERROR:
+            echo "Received message: " . $message->payload . "\n";
+            break;
+        case RD_KAFKA_RESP_ERR__PARTITION_EOF:
+            echo "No more messages; will wait for more\n";
+            break;
+        case RD_KAFKA_RESP_ERR__TIMED_OUT:
+            echo "Timed out\n";
+            break;
+        default:
+            throw new \Exception($message->errstr(), $message->err);
+            break;
+    }
+}
+```
+
+This script creates a Kafka consumer that listens for messages on the specified topic.
+
+</div>
+
+## Usage
+
+To run the producer script, use the following command in your Cursor terminal:
+
+```bash
+php kafka_producer.php
+```
+
+To run the consumer script, open another terminal and use:
+
+```bash
+php kafka_consumer.php
+```
+
+The consumer will start listening for messages. When you run the producer script, you should see the message being received by the consumer.
+
+## Best Practices
+
+1. Use environment variables for Kafka configuration details.
+2. Implement proper error handling and logging.
+3. Consider using a library like `monolog` for better logging capabilities.
+4. Implement a graceful shutdown mechanism for your consumer.
+5. Use compression for better performance when dealing with large messages or high throughput.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your Kafka broker address in the `config.php` file.
+2. Ensure your Kafka cluster is running and accessible.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that the `rdkafka` extension is correctly installed and enabled.
+
+For more detailed information on using Kafka with PHP, refer to the [php-rdkafka documentation](https://github.com/arnaud-lb/php-rdkafka).

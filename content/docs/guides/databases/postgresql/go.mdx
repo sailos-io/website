@@ -1,0 +1,234 @@
+---
+title: Go
+description: Learn how to connect to PostgreSQL databases in Sailos Devbox using Go
+---
+
+This guide will walk you through the process of connecting to a PostgreSQL database using Go within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Go environment
+- [A PostgreSQL database created using the Database app in Sailos](./)
+
+## Install Required Packages
+
+In your Cursor terminal, install the necessary packages:
+
+```bash
+go get github.com/lib/pq
+go get github.com/joho/godotenv
+```
+
+These commands install:
+- `github.com/lib/pq`: A pure Go PostgreSQL driver for the database/sql package
+- `github.com/joho/godotenv`: A Go port of the Ruby dotenv library
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Set up the environment variables
+
+First, let's set up the environment variables for our database connection. Create a `.env` file in your project root with the following content:
+
+```ini title=".env"
+DB_HOST=your_database_host
+DB_PORT=5432
+DB_USER=your_username
+DB_PASSWORD=your_password
+DB_NAME=your_database_name
+```
+
+Replace the placeholders with your actual PostgreSQL credentials from the Database app in Sailos.
+
+#### Create the main.go file
+
+Create a new file named `main.go` with the following content:
+
+```go title="main.go"
+package main
+
+import (
+	"database/sql"
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
+)
+
+// Employee struct represents the structure of our data
+type Employee struct {
+	ID       int
+	Name     string
+	Position string
+}
+
+// connectDB establishes a connection to the PostgreSQL database
+func connectDB() (*sql.DB, error) {
+	// Load environment variables from .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	// Retrieve database connection details from environment variables
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_NAME")
+
+	// Construct the connection string
+	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		dbHost, dbPort, dbUser, dbPassword, dbName)
+
+	// Open a connection to the database
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, err
+	}
+
+	// Verify the connection
+	err = db.Ping()
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("Successfully connected to the database")
+	return db, nil
+}
+
+// createTable creates the employees table if it doesn't exist
+func createTable(db *sql.DB) error {
+	_, err := db.Exec(`
+		CREATE TABLE IF NOT EXISTS employees (
+			id SERIAL PRIMARY KEY,
+			name VARCHAR(100) NOT NULL,
+			position VARCHAR(100) NOT NULL
+		)
+	`)
+	return err
+}
+
+// insertEmployee inserts a new employee into the database
+func insertEmployee(db *sql.DB, name, position string) error {
+	_, err := db.Exec("INSERT INTO employees (name, position) VALUES ($1, $2)", name, position)
+	return err
+}
+
+// getEmployees retrieves all employees from the database
+func getEmployees(db *sql.DB) ([]Employee, error) {
+	rows, err := db.Query("SELECT id, name, position FROM employees")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var employees []Employee
+	for rows.Next() {
+		var emp Employee
+		err := rows.Scan(&emp.ID, &emp.Name, &emp.Position)
+		if err != nil {
+			return nil, err
+		}
+		employees = append(employees, emp)
+	}
+	return employees, nil
+}
+
+func main() {
+	// Connect to the database
+	db, err := connectDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	// Ensure the database connection is closed when the function exits
+	defer func() {
+		if err := db.Close(); err != nil {
+			log.Printf("Error closing database connection: %v", err)
+		} else {
+			fmt.Println("Database connection closed successfully")
+		}
+	}()
+
+	// Create the employees table
+	err = createTable(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Insert sample employees
+	err = insertEmployee(db, "John Doe", "Developer")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = insertEmployee(db, "Jane Smith", "Designer")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Retrieve and display all employees
+	employees, err := getEmployees(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Employees:")
+	for _, emp := range employees {
+		fmt.Printf("ID: %d, Name: %s, Position: %s\n", emp.ID, emp.Name, emp.Position)
+	}
+
+	// The database connection will be closed automatically when main() exits
+	// due to the defer statement at the beginning of the function
+}
+```
+
+Let's break down the main components of this code:
+
+1. **Imports**: We import necessary packages, including `database/sql` for database operations and `github.com/lib/pq` as the PostgreSQL driver.
+
+2. **Employee struct**: Defines the structure for our employee data.
+
+3. **connectDB function**: Loads environment variables, constructs the connection string, and establishes a connection to the database.
+
+4. **createTable function**: Creates the `employees` table if it doesn't exist.
+
+5. **insertEmployee function**: Inserts a new employee into the database.
+
+6. **getEmployees function**: Retrieves all employees from the database.
+
+7. **main function**: Orchestrates the program flow, demonstrating database connection, table creation, data insertion, and retrieval.
+
+</div>
+
+## Usage
+
+To run the application, use the following command in your Cursor terminal:
+
+```bash
+go run main.go
+```
+
+This will execute the `main` function, demonstrating the connection to the database, table creation, data insertion, and querying.
+
+## Best Practices
+
+1. Use environment variables for database credentials.
+2. Always handle potential errors using proper error checking.
+3. Close the database connection after operations are complete.
+4. Use prepared statements for queries to prevent SQL injection.
+5. Consider using a connection pool for better performance in production environments.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your database credentials in the `.env` file.
+2. Ensure your PostgreSQL database is running and accessible.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that the required packages are correctly installed.
+
+For more detailed information on using PostgreSQL with Go, refer to the [lib/pq documentation](https://pkg.go.dev/github.com/lib/pq).

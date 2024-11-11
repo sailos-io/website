@@ -1,0 +1,47 @@
+---
+title: Redis
+description: Deploy and connect to Redis databases in Sailos DevBox
+---
+
+Redis is a popular, open-source in-memory data structure store that can be used as a database, cache, message broker, and queue. In Sailos DevBox, you can easily set up and connect to Redis databases for your development projects.
+
+## Deploy Redis in Sailos
+
+Sailos makes it easy to deploy a Redis database with just a few clicks. Follow these steps:
+
+<div className='steps [&_h5]:step'>
+
+<h5>From the Sailos desktop, click on the "Database" icon to open the Database app.</h5>
+
+![Redis](./images/redis-1.jpeg)
+
+<h5>Click on the "Create New Database" button. In the deployment form:</h5>
+   - Select "Redis" as the database type.
+   - Choose the desired Redis version (e.g., redis-7.0.6).
+   - Enter a name for your database (use lowercase letters and numbers only).
+   - Adjust the CPU and Memory sliders to set the resources for your database.
+   - Set the number of replicas (1 for single-node development and testing).
+   - Specify the storage size (e.g., 1 Gi).
+
+![Redis](./images/redis-2.png)
+
+<h5>Review the projected cost on the left sidebar. Click the "Deploy" button in the top right corner to create your Redis database.</h5>
+
+</div>
+
+Once deployed, Sailos will provide you with the necessary connection details.
+
+![Redis](./images/redis-3.png)
+
+## Connect to Redis in DevBox
+
+Here are examples of how to connect to your Redis database using different programming languages and frameworks within your DevBox environment:
+
+<Cards>
+  <Card title="Connect to Redis with Go in Sailos Devbox" href="./redis/go" />
+  <Card title="Connect to Redis with Java in Sailos Devbox" href="./redis/java" />
+  <Card title="Connect to Redis with Node.js in Sailos Devbox" href="./redis/nodejs" />
+  <Card title="Connect to Redis with PHP in Sailos Devbox" href="./redis/php" />
+  <Card title="Connect to Redis with Python in Sailos Devbox" href="./redis/python" />
+  <Card title="Connect to Redis with Rust in Sailos Devbox" href="./redis/rust" />
+</Cards>

@@ -1,0 +1,180 @@
+---
+title: Python
+description: Learn how to connect to MongoDB databases in Sailos Devbox using Python
+---
+
+This guide will walk you through the process of connecting to a MongoDB database using Python within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Python environment
+- [A MongoDB database created using the Database app in Sailos](./)
+
+## Activating the Python Environment
+
+Before you start, you need to activate the Python virtual environment in your Devbox. Open the terminal within Cursor IDE and run:
+
+```bash
+source ./bin/activate
+```
+
+You should see your prompt change, indicating that the virtual environment is now active.
+
+## Installing Required Packages
+
+In your Cursor terminal, install the necessary packages:
+
+```bash
+pip install pymongo python-dotenv
+```
+
+This command installs:
+- `pymongo`: The official MongoDB driver for Python
+- `python-dotenv`: A Python package that allows you to load environment variables from a .env file
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Set up the environment variables
+
+First, let's set up the environment variables for our database connection. Create a `.env` file in your project root with the following content:
+
+```ini title=".env"
+MONGO_URI=mongodb://your_username:your_password@your_database_host:27017/your_database_name?authSource=admin
+```
+
+Replace the placeholders with your actual MongoDB credentials from the Database app in Sailos.
+
+#### Create a database connection module
+
+Create a new file named `db_connection.py` with the following content:
+
+```python title="db_connection.py"
+import os
+from dotenv import load_dotenv
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
+
+# Load environment variables
+load_dotenv()
+
+def get_db_connection():
+    try:
+        client = MongoClient(os.getenv('MONGO_URI'))
+        # The ismaster command is cheap and does not require auth.
+        client.admin.command('ismaster')
+        print("Successfully connected to MongoDB")
+        return client
+    except ConnectionFailure:
+        print("Server not available")
+        return None
+
+def close_connection(client):
+    if client:
+        client.close()
+        print("MongoDB connection closed")
+```
+
+This module provides two main functions:
+
+1. `get_db_connection()`: This function establishes a connection to the MongoDB database using the credentials stored in the environment variables. It returns the client object if successful, or None if an error occurs.
+
+2. `close_connection(client)`: This function closes the database connection when it's no longer needed.
+
+#### Create a test script
+
+Now, let's create a test script to verify our connection and perform some basic database operations. Create a file named `test_mongodb.py` with the following content:
+
+```python title="test_mongodb.py"
+from db_connection import get_db_connection, close_connection
+
+def insert_document(collection, document):
+    result = collection.insert_one(document)
+    print(f"Inserted document with ID: {result.inserted_id}")
+
+def find_documents(collection, query={}):
+    documents = collection.find(query)
+    for doc in documents:
+        print(doc)
+
+def update_document(collection, query, update):
+    result = collection.update_one(query, {'$set': update})
+    print(f"Modified {result.modified_count} document(s)")
+
+def delete_document(collection, query):
+    result = collection.delete_one(query)
+    print(f"Deleted {result.deleted_count} document(s)")
+
+def main():
+    client = get_db_connection()
+    if client:
+        try:
+            db = client.get_database()
+            collection = db['test_collection']
+            
+            # Insert a document
+            insert_document(collection, {'name': 'John Doe', 'age': 30})
+            
+            # Find all documents
+            print("\nAll documents:")
+            find_documents(collection)
+            
+            # Update a document
+            update_document(collection, {'name': 'John Doe'}, {'age': 31})
+            
+            # Find the updated document
+            print("\nUpdated document:")
+            find_documents(collection, {'name': 'John Doe'})
+            
+            # Delete the document
+            delete_document(collection, {'name': 'John Doe'})
+            
+            # Verify deletion
+            print("\nAfter deletion:")
+            find_documents(collection)
+            
+        finally:
+            close_connection(client)
+
+if __name__ == "__main__":
+    main()
+```
+
+This script demonstrates basic CRUD operations:
+
+1. Inserting a document
+2. Finding documents
+3. Updating a document
+4. Deleting a document
+
+</div>
+
+## Running the Test Script
+
+To run the test script, make sure your virtual environment is activated, then execute:
+
+```bash
+python test_mongodb.py
+```
+
+If everything is set up correctly, you should see output indicating successful connection, document insertion, retrieval, update, and deletion.
+
+## Best Practices
+
+1. Always activate the virtual environment before running your Python scripts or installing packages.
+2. Use environment variables to store sensitive information like database credentials.
+3. Close database connections after use to free up resources.
+4. Use try-except blocks to handle potential errors gracefully.
+5. Use PyMongo's built-in methods for database operations to ensure proper handling of MongoDB-specific data types.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Ensure you've activated the virtual environment with `source ./bin/activate`.
+2. Verify that your MongoDB database is running and accessible.
+3. Double-check your database credentials in the `.env` file.
+4. Check the MongoDB logs in the Database app for any error messages.
+
+For more detailed information on using MongoDB with Python, refer to the [official PyMongo documentation](https://pymongo.readthedocs.io/).

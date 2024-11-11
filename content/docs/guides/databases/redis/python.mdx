@@ -1,0 +1,169 @@
+---
+title: Python
+description: Learn how to connect to Redis databases in Sailos Devbox using Python
+---
+
+This guide will walk you through the process of connecting to a Redis database using Python within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Python environment
+- [A Redis database created using the Database app in Sailos](./)
+
+## Activating the Python Environment
+
+Before you start, you need to activate the Python virtual environment in your Devbox. Open the terminal within Cursor IDE and run:
+
+```bash
+source ./bin/activate
+```
+
+You should see your prompt change, indicating that the virtual environment is now active.
+
+## Installing Required Packages
+
+In your Cursor terminal, install the necessary packages:
+
+```bash
+pip install redis python-dotenv
+```
+
+This command installs:
+- `redis`: The Redis client for Python
+- `python-dotenv`: A Python package that allows you to load environment variables from a .env file
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Set up the environment variables
+
+First, let's set up the environment variables for our database connection. Create a `.env` file in your project root with the following content:
+
+```ini title=".env"
+REDIS_HOST=your_redis_host
+REDIS_PORT=6379
+REDIS_PASSWORD=your_redis_password
+```
+
+Replace the placeholders with your actual Redis credentials from the Database app in Sailos.
+
+#### Create a Redis connection module
+
+Create a new file named `redis_connection.py` with the following content:
+
+```python title="redis_connection.py"
+import os
+from dotenv import load_dotenv
+import redis
+
+# Load environment variables
+load_dotenv()
+
+def get_redis_connection():
+    try:
+        r = redis.Redis(
+            host=os.getenv('REDIS_HOST'),
+            port=os.getenv('REDIS_PORT'),
+            password=os.getenv('REDIS_PASSWORD'),
+            decode_responses=True
+        )
+        r.ping()  # Test the connection
+        print("Successfully connected to Redis")
+        return r
+    except redis.ConnectionError as e:
+        print(f"Error connecting to Redis: {e}")
+        return None
+
+def close_connection(connection):
+    if connection:
+        connection.close()
+        print("Redis connection closed")
+```
+
+This module provides two main functions:
+
+1. `get_redis_connection()`: This function establishes a connection to the Redis database using the credentials stored in the environment variables. It returns the connection object if successful, or None if an error occurs.
+
+2. `close_connection(connection)`: This function closes the Redis connection when it's no longer needed.
+
+#### Create a test script
+
+Now, let's create a test script to verify our connection and perform some basic Redis operations. Create a file named `test_redis.py` with the following content:
+
+```python title="test_redis.py"
+from redis_connection import get_redis_connection, close_connection
+
+def set_value(r, key, value):
+    r.set(key, value)
+    print(f"Set {key}: {value}")
+
+def get_value(r, key):
+    value = r.get(key)
+    print(f"Get {key}: {value}")
+    return value
+
+def main():
+    redis_conn = get_redis_connection()
+    if redis_conn:
+        try:
+            # String operations
+            set_value(redis_conn, "mykey", "Hello from Sailos Devbox!")
+            get_value(redis_conn, "mykey")
+
+            # List operations
+            redis_conn.lpush("mylist", "element1", "element2", "element3")
+            print("List after push:", redis_conn.lrange("mylist", 0, -1))
+            print("Popped element:", redis_conn.lpop("mylist"))
+            print("List after pop:", redis_conn.lrange("mylist", 0, -1))
+
+            # Hash operations
+            redis_conn.hset("myhash", "field1", "value1")
+            redis_conn.hset("myhash", "field2", "value2")
+            print("Hash value for field1:", redis_conn.hget("myhash", "field1"))
+            print("All hash fields:", redis_conn.hgetall("myhash"))
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+        finally:
+            close_connection(redis_conn)
+
+if __name__ == "__main__":
+    main()
+```
+
+This script demonstrates various Redis operations:
+- Setting and getting string values
+- Working with lists (push, pop, and range)
+- Using hash structures (set, get, and get all)
+
+</div>
+
+## Running the Test Script
+
+To run the test script, make sure your virtual environment is activated, then execute:
+
+```bash
+python test_redis.py
+```
+
+If everything is set up correctly, you should see output indicating successful connection and the results of various Redis operations.
+
+## Best Practices
+
+1. Always activate the virtual environment before running your Python scripts or installing packages.
+2. Use environment variables to store sensitive information like database credentials.
+3. Close Redis connections after use to free up resources.
+4. Handle exceptions appropriately to manage potential errors.
+5. Consider using connection pooling for better performance in production environments.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Ensure you've activated the virtual environment with `source ./bin/activate`.
+2. Verify that your Redis database is running and accessible.
+3. Double-check your Redis credentials in the `.env` file.
+4. Check the Redis logs in the Database app for any error messages.
+
+For more detailed information on using Redis with Python, refer to the [official Redis-py documentation](https://redis-py.readthedocs.io/en/stable/).

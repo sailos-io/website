@@ -1,0 +1,235 @@
+---
+title: Node.js
+description: Learn how to connect to Milvus databases in Sailos Devbox using Node.js
+---
+
+This guide will walk you through the process of connecting to a Milvus database using Node.js within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Node.js environment
+- [A Milvus database created using the Database app in Sailos](./)
+
+## Install Required Packages
+
+In your Cursor terminal, install the necessary packages:
+
+```bash
+npm install @zilliz/milvus2-sdk-node dotenv
+```
+
+This command installs:
+- `@zilliz/milvus2-sdk-node`: The official Milvus Node.js SDK
+- `dotenv`: A zero-dependency module that loads environment variables from a `.env` file
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Set up the environment variables
+
+First, let's set up the environment variables for our Milvus connection. Create a `.env` file in your project root with the following content:
+
+```ini title=".env"
+MILVUS_HOST=your_milvus_host
+MILVUS_PORT=19530
+COLLECTION_NAME=test_collection
+DIMENSION=128
+```
+
+Replace the placeholders with your actual Milvus credentials from the Database app in Sailos.
+
+#### Create a connection file
+
+Create a new file named `milvusClient.js` with the following content:
+
+```javascript title="milvusClient.js"
+const { MilvusClient } = require('@zilliz/milvus2-sdk-node');
+require('dotenv').config();
+
+const client = new MilvusClient({
+  address: `${process.env.MILVUS_HOST}:${process.env.MILVUS_PORT}`,
+});
+
+module.exports = client;
+```
+
+#### Create database operations
+
+Now, let's create a file named `milvusOperations.js` to handle our database operations:
+
+```javascript title="milvusOperations.js"
+const client = require('./milvusClient');
+require('dotenv').config();
+
+async function createCollection() {
+  try {
+    const collectionName = process.env.COLLECTION_NAME;
+    const dimension = parseInt(process.env.DIMENSION);
+
+    // Define collection schema
+    const collectionSchema = {
+      collection_name: collectionName,
+      fields: [
+        {
+          name: 'id',
+          data_type: 'Int64',
+          is_primary_key: true,
+          auto_id: true
+        },
+        {
+          name: 'vector',
+          data_type: 'FloatVector',
+          dim: dimension
+        },
+        {
+          name: 'metadata',
+          data_type: 'VarChar',
+          max_length: 255
+        }
+      ]
+    };
+
+    // Create collection
+    await client.createCollection(collectionSchema);
+    console.log(`Collection ${collectionName} created successfully`);
+
+    // Create index
+    const indexParams = {
+      collection_name: collectionName,
+      field_name: 'vector',
+      extra_params: {
+        index_type: 'IVF_FLAT',
+        metric_type: 'L2',
+        params: JSON.stringify({ nlist: 1024 })
+      }
+    };
+    await client.createIndex(indexParams);
+    console.log('Index created successfully');
+  } catch (error) {
+    console.error('Error creating collection:', error);
+    throw error;
+  }
+}
+
+async function insertData(vectors, metadata) {
+  try {
+    const collectionName = process.env.COLLECTION_NAME;
+    
+    const data = {
+      collection_name: collectionName,
+      fields_data: vectors.map((vector, index) => ({
+        id: [],
+        vector,
+        metadata: metadata[index]
+      }))
+    };
+
+    const result = await client.insert(data);
+    console.log('Data inserted successfully:', result);
+    return result;
+  } catch (error) {
+    console.error('Error inserting data:', error);
+    throw error;
+  }
+}
+
+async function search(queryVector, topK = 5) {
+  try {
+    const collectionName = process.env.COLLECTION_NAME;
+
+    // Load collection
+    await client.loadCollection({
+      collection_name: collectionName
+    });
+
+    const searchParams = {
+      collection_name: collectionName,
+      vector: queryVector,
+      output_fields: ['metadata'],
+      limit: topK,
+      params: { nprobe: 10 }
+    };
+
+    const result = await client.search(searchParams);
+    console.log('Search results:', result);
+    return result;
+  } catch (error) {
+    console.error('Error searching:', error);
+    throw error;
+  }
+}
+
+module.exports = {
+  createCollection,
+  insertData,
+  search
+};
+```
+
+#### Create a main script
+
+Finally, let's create a `main.js` file to demonstrate all the operations:
+
+```javascript title="main.js"
+const { createCollection, insertData, search } = require('./milvusOperations');
+
+async function main() {
+  try {
+    // Create collection
+    await createCollection();
+
+    // Generate sample vectors and metadata
+    const sampleVectors = [
+      new Array(128).fill(0).map(() => Math.random()),
+      new Array(128).fill(0).map(() => Math.random())
+    ];
+    const sampleMetadata = ['Sample 1', 'Sample 2'];
+
+    // Insert data
+    await insertData(sampleVectors, sampleMetadata);
+
+    // Perform search
+    const queryVector = new Array(128).fill(0).map(() => Math.random());
+    await search(queryVector, 2);
+
+  } catch (error) {
+    console.error('An error occurred:', error);
+  }
+}
+
+main();
+```
+
+</div>
+
+## Usage
+
+To run the script, use the following command in your Cursor terminal:
+
+```bash
+node main.js
+```
+
+This will execute all the operations defined in the `main` function, demonstrating the connection to Milvus, collection creation, data insertion, and vector search.
+
+## Best Practices
+
+1. Use environment variables for Milvus connection details.
+2. Create indexes for better search performance.
+3. Load collections before performing search operations.
+4. Implement proper error handling.
+5. Use batch operations for inserting multiple vectors.
+6. Release resources by releasing collections when they're no longer needed.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your Milvus credentials in the `.env` file.
+2. Ensure your Milvus database is running and accessible.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that the required packages are correctly installed.
+5. Verify that the vector dimensions match your collection schema.
+
+For more detailed information on using Milvus with Node.js, refer to the [Milvus Node.js SDK documentation](https://github.com/milvus-io/milvus-sdk-node).

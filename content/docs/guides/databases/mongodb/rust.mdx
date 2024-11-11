@@ -1,0 +1,154 @@
+---
+title: Rust
+description: Learn how to connect to MongoDB databases in Sailos Devbox using Rust
+---
+
+This guide will walk you through the process of connecting to a MongoDB database using Rust within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Rust environment
+- [A MongoDB database created using the Database app in Sailos](./)
+
+## Install Required Dependencies
+
+In your Cursor terminal, add the necessary dependencies to your `Cargo.toml` file:
+
+```toml title="Cargo.toml"
+[dependencies]
+mongodb = "3.1.0"
+tokio = { version = "1.28", features = ["full"] }
+dotenv = "0.15"
+serde = { version = "1.0", features = ["derive"] }
+futures-util = "0.3"
+```
+
+These dependencies include:
+- `mongodb`: The official MongoDB driver for Rust
+- `tokio`: An asynchronous runtime for Rust
+- `dotenv`: A library for loading environment variables from a file
+- `serde`: A framework for serializing and deserializing Rust data structures
+- `futures-util`: Provides utility types for working with futures, including `StreamExt` which we'll use for cursor iteration
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Set up the environment variables
+
+First, let's set up the environment variables for our database connection. Create a `.env` file in your project root with the following content:
+
+```ini title=".env"
+MONGODB_URI=mongodb://your_username:your_password@your_database_host:27017/your_database_name?authSource=admin
+```
+
+Replace the placeholders with your actual MongoDB credentials from the Database app in Sailos.
+
+#### Create the main.rs file
+
+Create a new file named `src/main.rs` with the following content:
+
+```rust title="src/main.rs"
+use mongodb::{Client, options::ClientOptions};
+use mongodb::bson::doc;
+use dotenv::dotenv;
+use std::env;
+use serde::{Serialize, Deserialize};
+use futures_util::stream::TryStreamExt;
+ 
+#[derive(Debug, Serialize, Deserialize)]
+struct Employee {
+    name: String,
+    position: String,
+}
+ 
+#[tokio::main]
+async fn main() -> mongodb::error::Result<()> {
+    // Load environment variables from .env file
+    dotenv().ok();
+ 
+    // Get the MongoDB URI from the environment
+    let mongodb_uri = env::var("MONGODB_URI").expect("MONGODB_URI must be set");
+ 
+    // Parse a connection string into an options struct
+    let mut client_options = ClientOptions::parse(mongodb_uri).await?;
+ 
+    // Manually set an option
+    client_options.app_name = Some("Sailos Devbox Rust App".to_string());
+ 
+    // Get a handle to the deployment
+    let client = Client::with_options(client_options)?;
+ 
+    // Get a handle to the database specified in the connection string
+    let db = client.default_database()
+        .expect("No default database found in the connection string");
+ 
+    // Get a handle to a collection in the database
+    let collection = db.collection::<Employee>("employees");
+ 
+    // Insert a document
+    let new_employee = Employee {
+        name: "John Doe".to_string(),
+        position: "Developer".to_string(),
+    };
+    let insert_result = collection.insert_one(new_employee).await?;
+    println!("Inserted document with ID: {:?}", insert_result.inserted_id);
+ 
+    // Query the documents in the collection
+    let mut cursor = collection.find(doc! {}).await?;
+ 
+    // Iterate over the results of the cursor
+    while let Some(employee) = cursor.try_next().await? {
+        println!("Found employee: {:?}", employee);
+    }
+ 
+    Ok(())
+}
+```
+
+Let's break down the main components of this code:
+
+1. **Imports**: We import necessary modules from `mongodb`, `dotenv`, `std::env`, and `serde`.
+
+2. **Employee struct**: We define a struct to represent our data, using Serde for serialization and deserialization.
+
+3. **Main function**: The `main` function is marked with `#[tokio::main]` to use Tokio's async runtime.
+
+4. **Environment setup**: We load environment variables from the `.env` file and retrieve the MongoDB URI.
+
+5. **Connection**: We create a MongoDB client using the URI and connect to the database.
+
+6. **Data insertion**: We insert a sample employee into the database.
+
+7. **Data querying**: We query and display all employees in the database.
+
+</div>
+
+## Usage
+
+To run the application, use the following command in your Cursor terminal:
+
+```bash
+cargo run
+```
+
+This will compile and execute the `main` function, demonstrating the connection to the database, document insertion, and querying.
+
+## Best Practices
+
+1. Use environment variables for database credentials.
+2. Use the `dotenv` crate to manage environment variables in development.
+3. Implement proper error handling using Rust's `Result` type.
+4. Use Serde for serializing and deserializing data structures.
+5. Use async/await for efficient database operations.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your MongoDB credentials in the `.env` file.
+2. Ensure your MongoDB database is running and accessible.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that all required dependencies are correctly specified in your `Cargo.toml` file.
+
+For more detailed information on using MongoDB with Rust, refer to the [MongoDB Rust driver documentation](https://docs.rs/mongodb/latest/mongodb/).

@@ -1,0 +1,173 @@
+---
+title: Python
+description: Learn how to connect to PostgreSQL databases in Sailos Devbox using Python
+---
+
+This guide will walk you through the process of connecting to a PostgreSQL database using Python within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Python environment
+- [A PostgreSQL database created using the Database app in Sailos](./)
+
+## Activating the Python Environment
+
+Before you start, you need to activate the Python virtual environment in your Devbox. Open the terminal within Cursor IDE and run:
+
+```bash
+source ./bin/activate
+```
+
+You should see your prompt change, indicating that the virtual environment is now active.
+
+## Installing psycopg2-binary
+
+In your Cursor terminal, install `psycopg2-binary` using pip:
+
+```bash
+pip install psycopg2-binary
+```
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Create a Configuration File
+
+First, we'll create a configuration file to store our database connection parameters. This approach allows us to easily change settings without modifying our code.
+
+Create a file named `database.ini` in your project directory with the following content:
+
+```ini title="database.ini"
+[postgresql]
+host=your_database_host
+database=your_database_name
+user=your_username
+password=your_password
+port=5432
+```
+
+Replace `your_database_name`, `your_username`, and `your_password` with your actual PostgreSQL credentials from the Database app in Sailos.
+
+#### Create a Configuration Loader
+
+Next, we'll create a Python module to load the configuration from our `database.ini` file. This module will use the built-in `configparser` to read the configuration data.
+
+Create a file named `config.py` with the following content:
+
+```python title="config.py"
+from configparser import ConfigParser
+
+def load_config(filename='database.ini', section='postgresql'):
+    parser = ConfigParser()
+    parser.read(filename)
+
+    # get section, default to postgresql
+    config = {}
+    if parser.has_section(section):
+        params = parser.items(section)
+        for param in params:
+            config[param[0]] = param[1]
+    else:
+        raise Exception('Section {0} not found in the {1} file'.format(section, filename))
+
+    return config
+
+if __name__ == '__main__':
+    config = load_config()
+    print(config)
+```
+
+This `load_config()` function reads the `database.ini` file and returns a dictionary with the connection parameters. If you run this script directly, it will print out the configuration, which can be useful for debugging.
+
+#### Create a Connection Function
+
+Now, we'll create a module that uses our configuration loader to connect to the PostgreSQL database.
+
+Create a file named `connect.py` with the following content:
+
+```python title="connect.py"
+import psycopg2
+from config import load_config
+
+def connect(config):
+    """ Connect to the PostgreSQL database server """
+    try:
+        # connecting to the PostgreSQL server
+        conn = psycopg2.connect(**config)
+        print('Connected to the PostgreSQL server.')
+        return conn
+    except (psycopg2.DatabaseError, Exception) as error:
+        print(f"Error: {error}")
+        return None
+
+def execute_query(conn, query):
+    """ Execute a SQL query and return the results """
+    try:
+        with conn.cursor() as cur:
+            cur.execute(query)
+            return cur.fetchall()
+    except (psycopg2.DatabaseError, Exception) as error:
+        print(f"Error executing query: {error}")
+        return None
+
+if __name__ == '__main__':
+    config = load_config()
+    conn = connect(config)
+    
+    if conn:
+        # Execute SELECT version() query
+        version_query = "SELECT version();"
+        result = execute_query(conn, version_query)
+        
+        if result:
+            print(f"PostgreSQL version: {result[0][0]}")
+        
+        # Don't forget to close the connection
+        conn.close()
+        print("Connection closed.")
+```
+
+This module does several things:
+
+1. The `connect()` function uses `psycopg2.connect()` to establish a connection to the database using the configuration we loaded.
+2. The `execute_query()` function demonstrates how to execute a SQL query and fetch the results.
+3. In the `if __name__ == '__main__':` block, we test the connection by connecting to the database and querying its version.
+
+</div>
+
+## Usage
+
+To test the connection, make sure your virtual environment is activated, then run the `connect.py` script:
+
+```bash
+python connect.py
+```
+
+If successful, you should see output similar to:
+
+```bash
+Connected to the PostgreSQL server.
+PostgreSQL version: PostgreSQL 14.10 (Ubuntu 14.10-1.pgdg22.04+1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, 64-bit
+Connection closed.
+```
+
+## Best Practices
+
+1. Always activate the virtual environment before running your Python scripts or installing packages.
+2. Use a configuration file (`database.ini`) to store database credentials. This makes it easier to change settings without modifying your code.
+3. If using version control (e.g., git), add `database.ini` to your `.gitignore` file to avoid committing sensitive information.
+4. Use connection pooling for better performance in production environments.
+5. Always close database connections properly to avoid resource leaks.
+6. Use try-except blocks to handle potential database errors gracefully.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Ensure you've activated the virtual environment with `source ./bin/activate`.
+2. Verify that your PostgreSQL database is running.
+3. Double-check your database credentials in the `database.ini` file.
+4. Check the PostgreSQL logs in the Database app for any error messages.
+
+For more detailed information on using PostgreSQL with Python, refer to the [official psycopg2 documentation](https://www.psycopg.org/docs/).

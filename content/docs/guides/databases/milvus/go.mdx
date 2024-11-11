@@ -1,0 +1,187 @@
+---
+title: Go
+description: Learn how to connect to Milvus databases in Sailos Devbox using Go
+---
+
+This guide will walk you through the process of connecting to a Milvus database using Go within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Go environment
+- [A Milvus database created using the Database app in Sailos](./)
+
+## Install Required Packages
+
+In your Cursor terminal, install the necessary packages:
+
+```bash
+go get github.com/milvus-io/milvus-sdk-go/v2
+go get github.com/joho/godotenv
+```
+
+These commands install the Milvus Go SDK and the godotenv package for loading environment variables.
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Set up the environment variables
+
+Create a `.env` file in your project root with the following content:
+
+```ini title=".env"
+MILVUS_ADDR=your_milvus_host:19530
+COLLECTION_NAME=your_collection_name
+DIMENSION=128
+ID_COLUMN=id
+EMBEDDING_COLUMN=embedding
+```
+
+Replace the placeholders with your actual Milvus credentials and desired configuration.
+
+#### Create the main.go file
+
+Create a new file named `main.go` with the following content:
+
+```go title="main.go"
+package main
+
+import (
+	"context"
+	"log"
+	"os"
+	"strconv"
+	"time"
+
+	"github.com/joho/godotenv"
+	"github.com/milvus-io/milvus-sdk-go/v2/client"
+	"github.com/milvus-io/milvus-sdk-go/v2/entity"
+)
+
+func main() {
+	// Load environment variables from .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	// Get configuration from environment variables
+	milvusAddr := os.Getenv("MILVUS_ADDR")
+	collectionName := os.Getenv("COLLECTION_NAME")
+	dimStr := os.Getenv("DIMENSION")
+	idCol := os.Getenv("ID_COLUMN")
+	embeddingCol := os.Getenv("EMBEDDING_COLUMN")
+
+	// Convert dimension to int64
+	dim, err := strconv.ParseInt(dimStr, 10, 64)
+	if err != nil {
+		log.Fatalf("Failed to parse DIMENSION: %v", err)
+	}
+
+	// Setup context for client creation, use 10 seconds here
+	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+
+	// Create a new Milvus client
+	c, err := client.NewClient(ctx, client.Config{
+		Address: milvusAddr,
+	})
+	if err != nil {
+		log.Fatal("failed to connect to milvus:", err.Error())
+	}
+
+	// Check if the collection exists
+	collExists, err := c.HasCollection(ctx, collectionName)
+	if err != nil {
+		log.Fatal("failed to check collection exists:", err.Error())
+	}
+	if collExists {
+		// Drop the old collection if it exists
+		_ = c.DropCollection(ctx, collectionName)
+	}
+
+	// Define collection schema
+	schema := entity.NewSchema().WithName(collectionName).WithDescription("this is the basic example collection").
+		WithField(entity.NewField().WithName(idCol).WithDataType(entity.FieldTypeInt64).WithIsPrimaryKey(true).WithIsAutoID(false)).
+		WithField(entity.NewField().WithName(embeddingCol).WithDataType(entity.FieldTypeFloatVector).WithDim(dim))
+
+	// Create the collection
+	err = c.CreateCollection(ctx, schema, entity.DefaultShardNumber)
+	if err != nil {
+		log.Fatal("failed to create collection:", err.Error())
+	}
+
+	// List all collections
+	collections, err := c.ListCollections(ctx)
+	if err != nil {
+		log.Fatal("failed to list collections:", err.Error())
+	}
+	for _, collection := range collections {
+		log.Printf("Collection id: %d, name: %s\n", collection.ID, collection.Name)
+	}
+
+	// Show collection partitions
+	partitions, err := c.ShowPartitions(ctx, collectionName)
+	if err != nil {
+		log.Fatal("failed to show partitions:", err.Error())
+	}
+	for _, partition := range partitions {
+		log.Printf("partition id: %d, name: %s\n", partition.ID, partition.Name)
+	}
+
+	// Create a new partition
+	partitionName := "new_partition"
+	err = c.CreatePartition(ctx, collectionName, partitionName)
+	if err != nil {
+		log.Fatal("failed to create partition:", err.Error())
+	}
+
+	log.Println("After create partition")
+	// Show collection partitions again to check creation
+	partitions, err = c.ShowPartitions(ctx, collectionName)
+	if err != nil {
+		log.Fatal("failed to show partitions:", err.Error())
+	}
+	for _, partition := range partitions {
+		log.Printf("partition id: %d, name: %s\n", partition.ID, partition.Name)
+	}
+
+	// Clean up by dropping the collection
+	_ = c.DropCollection(ctx, collectionName)
+	c.Close()
+}
+```
+
+This code demonstrates how to connect to Milvus, create a collection, list collections, show and create partitions, and clean up by dropping the collection.
+
+</div>
+
+## Usage
+
+To run the application, use the following command in your Cursor terminal:
+
+```bash
+go run main.go
+```
+
+This will execute the `main` function, demonstrating the connection to Milvus and basic operations with collections and partitions.
+
+## Best Practices
+
+1. Use environment variables for Milvus connection details and configuration.
+2. Always handle potential errors using proper error checking.
+3. Use contexts with timeouts for operations to prevent hanging in case of network issues.
+4. Close the Milvus client connection after operations are complete.
+5. Clean up resources (like dropping test collections) after you're done with them.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your Milvus credentials in the `.env` file.
+2. Ensure your Milvus database is running and accessible.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that the required packages are correctly installed.
+
+For more detailed information on using Milvus with Go, refer to the [Milvus Go SDK documentation](https://github.com/milvus-io/milvus-sdk-go).

@@ -1,0 +1,47 @@
+---
+title: Kafka
+description: Deploy and connect to Kafka clusters in Sailos DevBox
+---
+
+Apache Kafka is a distributed event streaming platform that allows you to build real-time data pipelines and streaming applications. In Sailos DevBox, you can easily set up and connect to Kafka clusters for your development projects.
+
+## Deploy Kafka in Sailos
+
+Sailos makes it easy to deploy a Kafka cluster with just a few clicks. Follow these steps:
+
+<div className='steps [&_h5]:step'>
+
+<h5>From the Sailos desktop, click on the "Database" icon to open the Database app.</h5>
+
+![Kafka](./images/kafka-1.jpeg)
+
+<h5>Click on the "Create New Database" button. In the deployment form:</h5>
+   - Select "Kafka" as the database type.
+   - Choose the desired Kafka version (e.g., kafka-3.3.2).
+   - Enter a name for your Kafka cluster (use lowercase letters and numbers only).
+   - Adjust the CPU and Memory sliders to set the resources for your Kafka brokers.
+   - Set the number of brokers (1 for single-node development and testing, 3 or more for production).
+   - Specify the storage size for each broker (e.g., 3 Gi).
+
+![Kafka](./images/kafka-2.png)
+
+<h5>Review the projected cost on the left sidebar. Click the "Deploy" button in the top right corner to create your Kafka cluster.</h5>
+
+</div>
+
+Once deployed, Sailos will provide you with the necessary connection details.
+
+![Kafka](./images/kafka-3.png)
+
+## Connect to Kafka in DevBox
+
+Here are examples of how to connect to your Kafka cluster using different programming languages and frameworks within your DevBox environment:
+
+<Cards>
+  <Card title="Connect to Kafka with Go in Sailos Devbox" href="./kafka/go" />
+  <Card title="Connect to Kafka with Java in Sailos Devbox" href="./kafka/java" />
+  <Card title="Connect to Kafka with Node.js in Sailos Devbox" href="./kafka/nodejs" />
+  <Card title="Connect to Kafka with PHP in Sailos Devbox" href="./kafka/php" />
+  <Card title="Connect to Kafka with Python in Sailos Devbox" href="./kafka/python" />
+  <Card title="Connect to Kafka with Rust in Sailos Devbox" href="./kafka/rust" />
+</Cards>

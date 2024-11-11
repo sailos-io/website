@@ -1,0 +1,190 @@
+---
+title: Node.js
+description: Learn how to connect to MySQL databases in Sailos Devbox using Node.js
+---
+
+This guide will walk you through the process of connecting to a MySQL database using Node.js within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Node.js environment
+- [A MySQL database created using the Database app in Sailos](./)
+
+## Install Required Packages
+
+In your Cursor terminal, install the necessary packages:
+
+```bash
+npm install mysql2 dotenv
+```
+
+This command installs:
+- `mysql2`: A MySQL client for Node.js with focus on performance
+- `dotenv`: A zero-dependency module that loads environment variables from a `.env` file
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Set up the environment and create a client
+
+First, we'll create a `.env` file to store our database credentials and a configuration file to load them:
+
+```ini title=".env"
+DB_HOST=your_database_host
+DB_USER=your_username
+DB_PASSWORD=your_password
+DB_NAME=your_database_name
+DB_PORT=3306
+```
+
+Replace the placeholders with your actual MySQL credentials from the Database app in Sailos.
+
+Next, create a file named `db.js` with the following content:
+
+```javascript title="db.js"
+const mysql = require('mysql2/promise');
+require('dotenv').config();
+
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
+
+module.exports = pool;
+```
+
+This creates a connection pool, which is more efficient for handling multiple database operations.
+
+#### Create database operations
+
+Now, let's create a file named `dbOperations.js` to handle our database operations:
+
+```javascript title="dbOperations.js"
+const pool = require('./db');
+
+async function createTable() {
+  const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS employees (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      position VARCHAR(100) NOT NULL
+    )
+  `;
+  await pool.query(createTableQuery);
+  console.log('Table created successfully');
+}
+
+async function insertEmployee(name, position) {
+  const insertQuery = 'INSERT INTO employees (name, position) VALUES (?, ?)';
+  const [result] = await pool.query(insertQuery, [name, position]);
+  console.log('Employee inserted:', result.insertId);
+  return result.insertId;
+}
+
+async function updateEmployee(id, name, position) {
+  const updateQuery = 'UPDATE employees SET name = ?, position = ? WHERE id = ?';
+  const [result] = await pool.query(updateQuery, [name, position, id]);
+  console.log('Employee updated:', result.affectedRows > 0);
+  return result.affectedRows > 0;
+}
+
+async function getAllEmployees() {
+  const selectQuery = 'SELECT * FROM employees';
+  const [rows] = await pool.query(selectQuery);
+  console.log('All employees:', rows);
+  return rows;
+}
+
+async function deleteEmployee(id) {
+  const deleteQuery = 'DELETE FROM employees WHERE id = ?';
+  const [result] = await pool.query(deleteQuery, [id]);
+  console.log('Employee deleted:', result.affectedRows > 0);
+  return result.affectedRows > 0;
+}
+
+module.exports = {
+  createTable,
+  insertEmployee,
+  updateEmployee,
+  getAllEmployees,
+  deleteEmployee
+};
+```
+
+#### Create a main script
+
+Finally, let's create a `main.js` file to demonstrate all the operations:
+
+```javascript title="main.js"
+const {
+  createTable,
+  insertEmployee,
+  updateEmployee,
+  getAllEmployees,
+  deleteEmployee
+} = require('./dbOperations');
+
+async function main() {
+  try {
+    await createTable();
+    
+    const johnId = await insertEmployee('John Doe', 'Developer');
+    await insertEmployee('Jane Smith', 'Designer');
+    
+    await updateEmployee(johnId, 'John Updated', 'Senior Developer');
+    
+    const employees = await getAllEmployees();
+    console.log('Current employees:', employees);
+    
+    await deleteEmployee(johnId);
+    
+    const remainingEmployees = await getAllEmployees();
+    console.log('Remaining employees:', remainingEmployees);
+    
+  } catch (error) {
+    console.error('An error occurred:', error);
+  } finally {
+    process.exit();
+  }
+}
+
+main();
+```
+
+</div>
+
+## Usage
+
+To run the script, use the following command in your Cursor terminal:
+
+```bash
+node main.js
+```
+
+This will execute all the operations defined in the `main` function, demonstrating the connection to the database, table creation, data insertion, updating, querying, and deletion.
+
+## Best Practices
+
+1. Use environment variables for database credentials.
+2. Use connection pooling for better performance.
+3. Use prepared statements to prevent SQL injection.
+4. Always handle potential errors using try-catch blocks.
+5. Close the database connection after operations are complete (in this case, the pool handles this automatically).
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your database credentials in the `.env` file.
+2. Ensure your MySQL database is running and accessible.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that the `mysql2` package is correctly installed.
+
+For more detailed information on using MySQL with Node.js, refer to the [mysql2 documentation](https://github.com/sidorares/node-mysql2#readme).

@@ -1,0 +1,279 @@
+---
+title: Node.js
+description: Learn how to connect to PostgreSQL databases in Sailos Devbox using Node.js
+---
+
+This guide will walk you through the process of connecting to a PostgreSQL database using Node.js within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Node.js environment
+- [A PostgreSQL database created using the Database app in Sailos](./)
+
+## Install Required Packages
+
+In your Cursor terminal, install the necessary packages:
+
+```bash
+npm install pg dotenv
+```
+
+This command installs:
+- `pg`: The PostgreSQL client for Node.js
+- `dotenv`: A zero-dependency module that loads environment variables from a `.env` file
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Set up the environment and create a client
+
+First, we'll import the required modules and set up the database configuration:
+
+````javascript
+const { Client } = require('pg');
+require('dotenv').config();
+
+const dbConfig = {
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_NAME,
+};
+
+const client = new Client(dbConfig);
+````
+
+#### Create connection and query functions
+
+Next, we'll create functions to handle database connection and query execution:
+
+````javascript
+async function connectToDatabase() {
+  try {
+    await client.connect();
+    console.log('Connected to PostgreSQL database');
+  } catch (err) {
+    console.error('Error connecting to PostgreSQL database', err);
+    throw err;
+  }
+}
+
+async function executeQuery(query, values = []) {
+  try {
+    const result = await client.query(query, values);
+    return result.rows;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err;
+  }
+}
+
+async function closeDatabaseConnection() {
+  try {
+    await client.end();
+    console.log('Connection to PostgreSQL closed');
+  } catch (err) {
+    console.error('Error closing connection', err);
+  }
+}
+````
+
+#### Implement database operations
+
+Now, let's implement functions for various database operations:
+
+````javascript
+async function createTable() {
+  const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS employees (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      position VARCHAR(100) NOT NULL
+    );
+  `;
+  await executeQuery(createTableQuery);
+  console.log('Table created successfully');
+}
+
+async function insertEmployee(name, position) {
+  const insertQuery = 'INSERT INTO employees(name, position) VALUES ($1, $2) RETURNING *';
+  const values = [name, position];
+  const result = await executeQuery(insertQuery, values);
+  console.log('Employee inserted:', result[0]);
+}
+
+async function updateEmployee(id, name, position) {
+  const updateQuery = 'UPDATE employees SET name = $1, position = $2 WHERE id = $3 RETURNING *';
+  const values = [name, position, id];
+  const result = await executeQuery(updateQuery, values);
+  console.log('Employee updated:', result[0]);
+}
+
+async function getAllEmployees() {
+  const selectQuery = 'SELECT * FROM employees';
+  const employees = await executeQuery(selectQuery);
+  console.log('All employees:', employees);
+}
+````
+
+#### Create a main function to run operations
+
+Finally, let's create a main function to demonstrate all the operations:
+
+````javascript
+async function main() {
+  try {
+    await connectToDatabase();
+    await createTable();
+    await insertEmployee('John Doe', 'Developer');
+    await insertEmployee('Jane Smith', 'Designer');
+    await updateEmployee(1, 'John Updated', 'Senior Developer');
+    await getAllEmployees();
+  } catch (err) {
+    console.error('An error occurred:', err);
+  } finally {
+    await closeDatabaseConnection();
+  }
+}
+
+main();
+````
+
+</div>
+
+Here’s the complete code to connect to the Postgres database with Node.js:
+
+```javascript title="test-connection.js"
+const { Client } = require('pg');
+require('dotenv').config();
+
+const dbConfig = {
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_NAME,
+};
+
+const client = new Client(dbConfig);
+
+async function connectToDatabase() {
+  try {
+    await client.connect();
+    console.log('Connected to PostgreSQL database');
+  } catch (err) {
+    console.error('Error connecting to PostgreSQL database', err);
+    throw err;
+  }
+}
+
+async function executeQuery(query, values = []) {
+  try {
+    const result = await client.query(query, values);
+    return result.rows;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err;
+  }
+}
+
+async function closeDatabaseConnection() {
+  try {
+    await client.end();
+    console.log('Connection to PostgreSQL closed');
+  } catch (err) {
+    console.error('Error closing connection', err);
+  }
+}
+async function createTable() {
+  const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS employees (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      position VARCHAR(100) NOT NULL
+    );
+  `;
+  await executeQuery(createTableQuery);
+  console.log('Table created successfully');
+}
+
+async function insertEmployee(name, position) {
+  const insertQuery = 'INSERT INTO employees(name, position) VALUES ($1, $2) RETURNING *';
+  const values = [name, position];
+  const result = await executeQuery(insertQuery, values);
+  console.log('Employee inserted:', result[0]);
+}
+
+async function updateEmployee(id, name, position) {
+  const updateQuery = 'UPDATE employees SET name = $1, position = $2 WHERE id = $3 RETURNING *';
+  const values = [name, position, id];
+  const result = await executeQuery(updateQuery, values);
+  console.log('Employee updated:', result[0]);
+}
+
+async function getAllEmployees() {
+  const selectQuery = 'SELECT * FROM employees';
+  const employees = await executeQuery(selectQuery);
+  console.log('All employees:', employees);
+}
+
+async function main() {
+  try {
+    await connectToDatabase();
+    await createTable();
+    await insertEmployee('John Doe', 'Developer');
+    await insertEmployee('Jane Smith', 'Designer');
+    await updateEmployee(1, 'John Updated', 'Senior Developer');
+    await getAllEmployees();
+  } catch (err) {
+    console.error('An error occurred:', err);
+  } finally {
+    await closeDatabaseConnection();
+  }
+}
+
+main();
+```
+
+## Usage
+
+Before running the script, create a `.env` file in the same directory with the following content:
+
+````ini title=".env"
+DB_USER=your_username
+DB_PASSWORD=your_password
+DB_HOST=your_database_host
+DB_PORT=5432
+DB_NAME=your_database_name
+````
+
+Replace the placeholders with your actual PostgreSQL credentials from the Database app in Sailos.
+
+To test the connection, run the test script:
+
+```bash
+node test-connection.js
+```
+
+This will execute all the operations defined in the `main` function, demonstrating the connection to the database, table creation, data insertion, updating, and querying.
+
+## Best Practices
+
+1. Use environment variables for database credentials.
+2. Always handle potential errors using try-catch blocks.
+3. Close the database connection after operations are complete.
+4. Use parameterized queries to prevent SQL injection.
+5. Consider using connection pooling for better performance in production environments.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your database credentials in the `.env` file.
+2. Ensure your PostgreSQL database is running and accessible.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that the `pg` package is correctly installed.
+
+For more detailed information on using PostgreSQL with Node.js, refer to the [node-postgres documentation](https://node-postgres.com/).

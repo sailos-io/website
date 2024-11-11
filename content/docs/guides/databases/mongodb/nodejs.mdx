@@ -1,0 +1,181 @@
+---
+title: Node.js
+description: Learn how to connect to MongoDB databases in Sailos Devbox using Node.js
+---
+
+This guide will walk you through the process of connecting to a MongoDB database using Node.js within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Node.js environment
+- [A MongoDB database created using the Database app in Sailos](./)
+
+## Install Required Packages
+
+In your Cursor terminal, install the necessary packages:
+
+```bash
+npm install mongodb dotenv
+```
+
+This command installs:
+- `mongodb`: The official MongoDB driver for Node.js
+- `dotenv`: A zero-dependency module that loads environment variables from a `.env` file
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Set up the environment variables
+
+First, let's set up the environment variables for our database connection. Create a `.env` file in your project root with the following content:
+
+```ini title=".env"
+MONGO_URI=mongodb://your_username:your_password@your_database_host:27017/your_database_name?authSource=admin
+```
+
+Replace the placeholders with your actual MongoDB credentials from the Database app in Sailos.
+
+#### Create a connection file
+
+Next, create a file named `db.js` with the following content:
+
+```javascript title="db.js"
+const { MongoClient } = require('mongodb');
+require('dotenv').config();
+
+const uri = process.env.MONGO_URI;
+const client = new MongoClient(uri);
+
+async function connectToDatabase() {
+  try {
+    await client.connect();
+    console.log('Connected to MongoDB');
+    return client.db();
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1);
+  }
+}
+
+module.exports = { connectToDatabase, client };
+```
+
+This file creates a MongoDB client and exports a function to connect to the database.
+
+#### Create database operations
+
+Now, let's create a file named `dbOperations.js` to handle our database operations:
+
+```javascript title="dbOperations.js"
+const { connectToDatabase, client } = require('./db');
+
+async function createDocument(collection, document) {
+  const db = await connectToDatabase();
+  const result = await db.collection(collection).insertOne(document);
+  console.log(`Document inserted with _id: ${result.insertedId}`);
+  return result.insertedId;
+}
+
+async function readDocuments(collection, query = {}) {
+  const db = await connectToDatabase();
+  const documents = await db.collection(collection).find(query).toArray();
+  console.log('Documents found:', documents);
+  return documents;
+}
+
+async function updateDocument(collection, filter, update) {
+  const db = await connectToDatabase();
+  const result = await db.collection(collection).updateOne(filter, { $set: update });
+  console.log(`${result.modifiedCount} document(s) updated`);
+  return result.modifiedCount;
+}
+
+async function deleteDocument(collection, filter) {
+  const db = await connectToDatabase();
+  const result = await db.collection(collection).deleteOne(filter);
+  console.log(`${result.deletedCount} document(s) deleted`);
+  return result.deletedCount;
+}
+
+module.exports = {
+  createDocument,
+  readDocuments,
+  updateDocument,
+  deleteDocument
+};
+```
+
+#### Create a main script
+
+Finally, let's create a `main.js` file to demonstrate all the operations:
+
+```javascript title="main.js"
+const {
+  createDocument,
+  readDocuments,
+  updateDocument,
+  deleteDocument
+} = require('./dbOperations');
+const { client } = require('./db');
+
+async function main() {
+  try {
+    // Create a document
+    const newEmployeeId = await createDocument('employees', { name: 'John Doe', position: 'Developer' });
+    
+    // Read all documents
+    await readDocuments('employees');
+    
+    // Update a document
+    await updateDocument('employees', { _id: newEmployeeId }, { position: 'Senior Developer' });
+    
+    // Read the updated document
+    await readDocuments('employees', { _id: newEmployeeId });
+    
+    // Delete the document
+    await deleteDocument('employees', { _id: newEmployeeId });
+    
+    // Confirm deletion
+    await readDocuments('employees');
+    
+  } catch (error) {
+    console.error('An error occurred:', error);
+  } finally {
+    await client.close();
+  }
+}
+
+main();
+```
+
+</div>
+
+## Usage
+
+To run the script, use the following command in your Cursor terminal:
+
+```bash
+node main.js
+```
+
+This will execute all the operations defined in the `main` function, demonstrating the connection to the database, document creation, reading, updating, and deletion.
+
+## Best Practices
+
+1. Use environment variables for database credentials.
+2. Use connection pooling for better performance (MongoDB driver handles this automatically).
+3. Always handle potential errors using try-catch blocks.
+4. Close the database connection after operations are complete.
+5. Use indexes for frequently queried fields to improve performance.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your MongoDB credentials in the `.env` file.
+2. Ensure your MongoDB database is running and accessible.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that the `mongodb` package is correctly installed.
+
+For more detailed information on using MongoDB with Node.js, refer to the [official MongoDB Node.js driver documentation](https://docs.mongodb.com/drivers/node/).

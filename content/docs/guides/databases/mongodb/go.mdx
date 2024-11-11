@@ -1,0 +1,177 @@
+---
+title: Go
+description: Learn how to connect to MongoDB databases in Sailos Devbox using Go
+---
+
+This guide will walk you through the process of connecting to a MongoDB database using Go within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Go environment
+- [A MongoDB database created using the Database app in Sailos](./)
+
+## Install Required Packages
+
+In your Cursor terminal, install the necessary packages:
+
+```bash
+go get go.mongodb.org/mongo-driver/mongo
+go get github.com/joho/godotenv
+```
+
+These commands install:
+- `go.mongodb.org/mongo-driver/mongo`: The official MongoDB driver for Go
+- `github.com/joho/godotenv`: A Go port of the Ruby dotenv library
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Set up the environment variables
+
+First, let's set up the environment variables for our database connection. Create a `.env` file in your project root with the following content:
+
+```ini title=".env"
+MONGO_URI=mongodb://your_username:your_password@your_database_host:27017
+DB_NAME=your_database_name
+```
+
+Replace the placeholders with your actual MongoDB credentials from the Database app in Sailos. Note that we're not including the database name in the URI, as we'll create it programmatically if it doesn't exist.
+
+#### Create the main.go file
+
+Create a new file named `main.go` with the following content:
+
+```go title="main.go"
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"os"
+	"time"
+
+	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+// Employee struct represents the structure of our data
+type Employee struct {
+	Name     string
+	Position string
+}
+
+func main() {
+	// Load environment variables from .env file
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	// Get MongoDB connection URI and database name from environment variables
+	mongoURI := os.Getenv("MONGO_URI")
+	dbName := os.Getenv("DB_NAME")
+
+	// Create a new client and connect to the server
+	client, err := mongo.NewClient(options.Client().ApplyURI(mongoURI))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	err = client.Connect(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer client.Disconnect(ctx)
+
+	// Check if the database exists, if not create it
+	err = createDatabaseIfNotExists(client, ctx, dbName)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Get a handle for your collection
+	collection := client.Database(dbName).Collection("employees")
+
+	// Insert a document
+	employee := Employee{"John Doe", "Developer"}
+	insertResult, err := collection.InsertOne(ctx, employee)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Inserted a single document: ", insertResult.InsertedID)
+
+	// Find a document
+	var result Employee
+	err = collection.FindOne(ctx, bson.M{"name": "John Doe"}).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Found a single document: %+v\n", result)
+}
+
+func createDatabaseIfNotExists(client *mongo.Client, ctx context.Context, dbName string) error {
+	// List all database names
+	databases, err := client.ListDatabaseNames(ctx, bson.M{})
+	if err != nil {
+		return err
+	}
+
+	// Check if our database exists
+	for _, db := range databases {
+		if db == dbName {
+			fmt.Printf("Database '%s' already exists\n", dbName)
+			return nil
+		}
+	}
+
+	// If the database doesn't exist, create it by inserting a document
+	fmt.Printf("Creating database '%s'\n", dbName)
+	err = client.Database(dbName).RunCommand(ctx, bson.D{{"create", "employees"}}).Err()
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Database '%s' created successfully\n", dbName)
+	return nil
+}
+```
+
+This code demonstrates how to connect to MongoDB, create a database if it doesn't exist, insert a document, and find a document. It uses environment variables for the MongoDB URI and database name.
+
+</div>
+
+## Usage
+
+To run the application, use the following command in your Cursor terminal:
+
+```bash
+go run main.go
+```
+
+This will execute the `main` function, demonstrating the connection to MongoDB, database creation (if necessary), and performing basic operations.
+
+## Best Practices
+
+1. Use environment variables for database credentials and configuration.
+2. Always handle potential errors using proper error checking.
+3. Use contexts for operations that might need to be cancelled or timed out.
+4. Close the database connection after operations are complete.
+5. Use indexes for frequently queried fields to improve performance.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your MongoDB credentials in the `.env` file.
+2. Ensure your MongoDB database is running and accessible.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that the required packages are correctly installed.
+
+For more detailed information on using MongoDB with Go, refer to the [official MongoDB Go driver documentation](https://pkg.go.dev/go.mongodb.org/mongo-driver/mongo).

@@ -1,0 +1,131 @@
+---
+title: PHP
+description: Learn how to connect to PostgreSQL databases in Sailos Devbox using PHP
+---
+
+This guide will walk you through the process of connecting to a PostgreSQL database using PHP within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with PHP environment
+- [A PostgreSQL database created using the Database app in Sailos](./)
+
+## Install Required Extensions
+
+In your Cursor terminal, ensure that the PostgreSQL extension for PHP is installed:
+
+```bash
+sudo apt-get update
+sudo apt-get install php-pgsql
+```
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Create a Configuration File
+
+First, let's create a configuration file to store our database connection parameters. Create a file named `config.php` in your project directory with the following content:
+
+```php title="config.php"
+<?php
+return [
+    'host' => 'your_database_host',
+    'port' => '5432',
+    'dbname' => 'your_database_name',
+    'user' => 'your_username',
+    'password' => 'your_password'
+];
+```
+
+Replace the placeholders with your actual PostgreSQL credentials from the Database app in Sailos.
+
+#### Create a Database Connection Function
+
+Next, let's create a PHP file that will handle the database connection. Create a file named `db_connect.php` with the following content:
+
+```php title="db_connect.php"
+<?php
+function getDbConnection() {
+    $config = include 'config.php';
+    
+    $dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['dbname']};";
+    
+    try {
+        $pdo = new PDO($dsn, $config['user'], $config['password'], [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
+        echo "Connected successfully to the database.\n";
+        return $pdo;
+    } catch (PDOException $e) {
+        die("Connection failed: " . $e->getMessage());
+    }
+}
+```
+
+This function reads the configuration from `config.php` and establishes a connection to the PostgreSQL database using PDO (PHP Data Objects).
+
+#### Create a Test Script
+
+Now, let's create a test script to verify our connection and perform some basic database operations. Create a file named `test_db.php` with the following content:
+
+```php title="test_db.php"
+<?php
+require_once 'db_connect.php';
+
+$pdo = getDbConnection();
+
+// Create a table
+$pdo->exec("CREATE TABLE IF NOT EXISTS employees (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    position VARCHAR(100) NOT NULL
+)");
+echo "Table created successfully.\n";
+
+// Insert a record
+$stmt = $pdo->prepare("INSERT INTO employees (name, position) VALUES (?, ?)");
+$stmt->execute(['John Doe', 'Developer']);
+echo "Record inserted successfully.\n";
+
+// Query the table
+$stmt = $pdo->query("SELECT * FROM employees");
+echo "Employees:\n";
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    echo "ID: {$row['id']}, Name: {$row['name']}, Position: {$row['position']}\n";
+}
+
+// Close the connection
+$pdo = null;
+```
+
+This script demonstrates creating a table, inserting a record, and querying the table.
+
+</div>
+
+## Usage
+
+To run the test script, use the following command in your Cursor terminal:
+
+```bash
+php test_db.php
+```
+
+This will execute the script, demonstrating the connection to the database, table creation, data insertion, and querying.
+
+## Best Practices
+
+1. Use environment variables or a separate configuration file for database credentials.
+2. Always use prepared statements to prevent SQL injection.
+3. Handle potential errors using try-catch blocks.
+4. Close the database connection after operations are complete.
+5. Use connection pooling for better performance in production environments.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your database credentials in the `config.php` file.
+2. Ensure your PostgreSQL database is running and accessible.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that the `php-pgsql` extension is correctly installed.
+
+For more detailed information on using PostgreSQL with PHP, refer to the [official PHP PostgreSQL documentation](https://www.php.net/manual/en/book.pgsql.php).

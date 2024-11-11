@@ -1,0 +1,307 @@
+---
+title: Java
+description: Learn how to connect to MongoDB databases in Sailos Devbox using Java
+---
+
+This guide will walk you through the process of connecting to a MongoDB database using Java within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Java environment
+- [A MongoDB database created using the Database app in Sailos](./)
+
+## Project Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Create a new Maven project
+
+In your Sailos Devbox terminal, initialize a new Maven project:
+
+```bash
+mvn archetype:generate -DgroupId=com.example -DartifactId=mongodb-java-example -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+mv mongodb-java-example/* .
+rm -rf mongodb-java-example/
+```
+
+#### Project Structure
+
+After setting up, your project structure should look like this:
+
+```
+/
+├── pom.xml
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   └── com
+│   │   │       └── example
+│   │   │           ├── App.java
+│   │   │           ├── MongoConfig.java
+│   │   │           └── Employee.java
+│   │   └── resources
+│   │       └── mongodb.properties
+│   └── test
+│       └── java
+│           └── com
+│               └── example
+│                   └── AppTest.java
+```
+
+#### Update pom.xml
+
+Replace the content of your `pom.xml` file with the following:
+
+```xml title="pom.xml"
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+ 
+    <groupId>com.example</groupId>
+    <artifactId>mongodb-java-example</artifactId>
+    <version>1.0-SNAPSHOT</version>
+ 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+ 
+    <dependencies>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongodb-driver-sync</artifactId>
+            <version>5.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+ 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.example.App</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+
+This `pom.xml` file includes the necessary dependencies (MongoDB Java driver and Logback for logging) and configures the Maven Shade plugin to create an executable JAR.
+
+#### Create a configuration file
+
+Create a file named `mongodb.properties` in the `src/main/resources` directory:
+
+```ini title="mongodb.properties"
+mongodb.uri=mongodb://your_mongodb_host:27017
+mongodb.database=your_database_name
+```
+
+Replace the placeholders with your actual MongoDB credentials from the Database app in Sailos.
+
+#### Create Java classes
+
+Create the following Java classes in the `src/main/java/com/example` directory:
+
+1. `MongoConfig.java`:
+
+```java title="MongoConfig.java"
+package com.example;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+public class MongoConfig {
+    private static final Properties properties = new Properties();
+
+    static {
+        try (InputStream input = MongoConfig.class.getClassLoader().getResourceAsStream("mongodb.properties")) {
+            if (input == null) {
+                System.out.println("Sorry, unable to find mongodb.properties");
+                System.exit(1);
+            }
+            properties.load(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getMongoUri() {
+        return properties.getProperty("mongodb.uri");
+    }
+
+    public static String getDatabase() {
+        return properties.getProperty("mongodb.database");
+    }
+}
+```
+
+This class loads the MongoDB connection details from the `mongodb.properties` file.
+
+2. `Employee.java`:
+
+```java title="Employee.java"
+package com.example;
+
+import org.bson.Document;
+
+public class Employee {
+    private String id;
+    private String name;
+    private String position;
+
+    public Employee(String name, String position) {
+        this.name = name;
+        this.position = position;
+    }
+
+    public Employee(Document doc) {
+        this.id = doc.getObjectId("_id").toString();
+        this.name = doc.getString("name");
+        this.position = doc.getString("position");
+    }
+
+    public Document toDocument() {
+        return new Document("name", name)
+                .append("position", position);
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", position='" + position + '\'' +
+                '}';
+    }
+}
+```
+
+This class represents an Employee document in MongoDB.
+
+3. `App.java`:
+
+```java title="App.java"
+package com.example;
+
+import com.mongodb.client.*;
+import org.bson.Document;
+
+public class App {
+    public static void main(String[] args) {
+        try (MongoClient mongoClient = MongoClients.create(MongoConfig.getMongoUri())) {
+            MongoDatabase database = mongoClient.getDatabase(MongoConfig.getDatabase());
+            MongoCollection<Document> collection = database.getCollection("employees");
+
+            System.out.println("Connected to MongoDB");
+
+            // Insert a document
+            Employee newEmployee = new Employee("John Doe", "Developer");
+            collection.insertOne(newEmployee.toDocument());
+            System.out.println("Inserted a new employee");
+
+            // Find all documents
+            System.out.println("All employees:");
+            try (MongoCursor<Document> cursor = collection.find().iterator()) {
+                while (cursor.hasNext()) {
+                    Employee employee = new Employee(cursor.next());
+                    System.out.println(employee);
+                }
+            }
+
+            // Update a document
+            Document query = new Document("name", "John Doe");
+            Document update = new Document("$set", new Document("position", "Senior Developer"));
+            collection.updateOne(query, update);
+            System.out.println("Updated John Doe's position");
+
+            // Delete a document
+            Document deleteQuery = new Document("name", "John Doe");
+            collection.deleteOne(deleteQuery);
+            System.out.println("Deleted John Doe from the database");
+
+        } catch (Exception e) {
+            System.err.println("Error connecting to MongoDB: " + e.getMessage());
+        }
+    }
+}
+```
+
+This is the main class that demonstrates basic MongoDB operations using the Java driver:
+   - It connects to the MongoDB database.
+   - It inserts a new employee document.
+   - It finds and prints all employee documents.
+   - It updates an employee's position.
+   - It deletes an employee document.
+
+</div>
+
+## Build and Run
+
+To build and run the project, use the following commands in your terminal:
+
+```bash
+mvn clean package
+java -jar target/mongodb-java-example-1.0-SNAPSHOT.jar
+```
+
+If everything is set up correctly, you should see output demonstrating the MongoDB operations.
+
+## Best Practices
+
+1. Use a properties file to store MongoDB connection details.
+2. Implement a configuration class to load and provide access to MongoDB properties.
+3. Use the try-with-resources statement to ensure that the MongoClient is properly closed.
+4. Handle exceptions appropriately and provide meaningful error messages.
+5. Use Maven for dependency management and build automation.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your MongoDB credentials in the `mongodb.properties` file.
+2. Ensure your MongoDB database is running and accessible from your Devbox environment.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that the MongoDB Java driver dependency is correctly specified in your `pom.xml` file.
+5. Make sure you're using the correct version of Java (11 in this example).
+
+For more detailed information on using MongoDB with Java, refer to the [MongoDB Java Driver documentation](https://mongodb.github.io/mongo-java-driver/).

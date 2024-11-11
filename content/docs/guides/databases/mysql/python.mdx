@@ -1,0 +1,216 @@
+---
+title: Python
+description: Learn how to connect to MySQL databases in Sailos Devbox using Python
+---
+
+This guide will walk you through the process of connecting to a MySQL database using Python within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Python environment
+- [A MySQL database created using the Database app in Sailos](./)
+
+## Activating the Python Environment
+
+Before you start, you need to activate the Python virtual environment in your Devbox. Open the terminal within Cursor IDE and run:
+
+```bash
+source ./bin/activate
+```
+
+You should see your prompt change, indicating that the virtual environment is now active.
+
+## Installing Required Packages
+
+In your Cursor terminal, install the necessary packages:
+
+```bash
+pip install mysql-connector-python python-dotenv
+```
+
+This command installs:
+- `mysql-connector-python`: The official MySQL driver for Python
+- `python-dotenv`: A Python package that allows you to load environment variables from a .env file
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Set up the environment variables
+
+First, let's set up the environment variables for our database connection. Create a `.env` file in your project root with the following content:
+
+```ini title=".env"
+DB_HOST=your_database_host
+DB_USER=your_username
+DB_PASSWORD=your_password
+DB_NAME=your_database_name
+DB_PORT=3306
+```
+
+Replace the placeholders with your actual MySQL credentials from the Database app in Sailos.
+
+#### Create a database connection module
+
+Create a new file named `db_connection.py` with the following content:
+
+```python title="db_connection.py"
+import os
+from dotenv import load_dotenv
+import mysql.connector
+from mysql.connector import Error
+ 
+# Load environment variables
+load_dotenv()
+ 
+def get_db_connection():
+    try:
+        # First, connect without specifying a database
+        connection = mysql.connector.connect(
+            host=os.getenv('DB_HOST'),
+            user=os.getenv('DB_USER'),
+            password=os.getenv('DB_PASSWORD'),
+            port=os.getenv('DB_PORT')
+        )
+        if connection.is_connected():
+            cursor = connection.cursor()
+            
+            # Create the database if it doesn't exist
+            db_name = os.getenv('DB_NAME')
+            cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
+            
+            # Close the initial connection
+            cursor.close()
+            connection.close()
+            
+            # Reconnect with the database specified
+            connection = mysql.connector.connect(
+                host=os.getenv('DB_HOST'),
+                user=os.getenv('DB_USER'),
+                password=os.getenv('DB_PASSWORD'),
+                database=db_name,
+                port=os.getenv('DB_PORT')
+            )
+            
+            if connection.is_connected():
+                print(f"Successfully connected to MySQL database '{db_name}'")
+                return connection
+    except Error as e:
+        print(f"Error connecting to MySQL database: {e}")
+        return None
+ 
+def close_connection(connection):
+    if connection:
+        connection.close()
+        print("MySQL connection closed")
+```
+
+This module provides two main functions:
+
+1. `get_db_connection()`: This function establishes a connection to the MySQL database using the credentials stored in the environment variables. It returns the connection object if successful, or None if an error occurs.
+
+2. `close_connection(connection)`: This function closes the database connection when it's no longer needed.
+
+#### Create a test script
+
+Now, let's create a test script to verify our connection and perform some basic database operations. Create a file named `test_mysql.py` with the following content:
+
+```python title="test_mysql.py"
+from mysql.connector import Error
+from db_connection import get_db_connection, close_connection
+
+def create_table(cursor):
+    create_table_query = """
+    CREATE TABLE IF NOT EXISTS employees (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100),
+        email VARCHAR(100)
+    )
+    """
+    cursor.execute(create_table_query)
+    print("Table 'employees' created successfully")
+
+def insert_employee(cursor, name, email):
+    insert_query = "INSERT INTO employees (name, email) VALUES (%s, %s)"
+    cursor.execute(insert_query, (name, email))
+    print(f"Employee {name} inserted successfully")
+
+def get_all_employees(cursor):
+    select_query = "SELECT * FROM employees"
+    cursor.execute(select_query)
+    employees = cursor.fetchall()
+    for employee in employees:
+        print(f"ID: {employee[0]}, Name: {employee[1]}, Email: {employee[2]}")
+
+def main():
+    connection = get_db_connection()
+    if connection:
+        try:
+            cursor = connection.cursor()
+            
+            create_table(cursor)
+            
+            insert_employee(cursor, "John Doe", "john@example.com")
+            insert_employee(cursor, "Jane Smith", "jane@example.com")
+            
+            print("\nAll Employees:")
+            get_all_employees(cursor)
+            
+            connection.commit()
+        except Error as e:
+            print(f"Error: {e}")
+        finally:
+            if cursor:
+                cursor.close()
+            close_connection(connection)
+
+if __name__ == "__main__":
+    main()
+```
+
+Let's break down the main components of this script:
+
+1. `create_table(cursor)`: This function creates a table named 'employees' if it doesn't already exist. It demonstrates how to execute a CREATE TABLE SQL statement.
+
+2. `insert_employee(cursor, name, email)`: This function inserts a new employee record into the 'employees' table. It shows how to use parameterized queries to safely insert data.
+
+3. `get_all_employees(cursor)`: This function retrieves all records from the 'employees' table and prints them. It demonstrates how to execute a SELECT query and fetch results.
+
+4. `main()`: This is the main function that ties everything together. It:
+   - Establishes a database connection
+   - Creates the 'employees' table
+   - Inserts two sample employees
+   - Retrieves and prints all employees
+   - Handles any exceptions that might occur
+   - Ensures that the cursor and connection are properly closed
+
+</div>
+
+## Running the Test Script
+
+To run the test script, make sure your virtual environment is activated, then execute:
+
+```bash
+python test_mysql.py
+```
+
+If everything is set up correctly, you should see output indicating successful connection, table creation, data insertion, and retrieval.
+
+## Best Practices
+
+1. Always activate the virtual environment before running your Python scripts or installing packages.
+2. Use environment variables to store sensitive information like database credentials.
+3. Close database connections and cursors after use to free up resources.
+4. Use parameterized queries to prevent SQL injection.
+5. Handle exceptions appropriately to manage potential errors.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Ensure you've activated the virtual environment with `source ./bin/activate`.
+2. Verify that your MySQL database is running and accessible.
+3. Double-check your database credentials in the `.env` file.
+4. Check the MySQL logs in the Database app for any error messages.
+
+For more detailed information on using MySQL with Python, refer to the [official MySQL Connector/Python documentation](https://dev.mysql.com/doc/connector-python/en/).

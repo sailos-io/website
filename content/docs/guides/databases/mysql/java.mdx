@@ -1,0 +1,293 @@
+---
+title: Java
+description: Learn how to connect to MySQL databases in Sailos Devbox using Java
+---
+
+This guide will walk you through the process of connecting to a MySQL database using Java within your Sailos Devbox project, including basic CRUD (Create, Read, Update, Delete) operations.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Java environment
+- [A MySQL database created using the Database app in Sailos](./)
+
+## Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Download MySQL JDBC Driver
+
+To connect to the MySQL server from a Java program, you need a MySQL JDBC driver.
+
+You can download the latest version of the driver from the [MySQL Connector/J download page](https://dev.mysql.com/downloads/connector/j/). The downloaded file is a JAR file, e.g., mysql-connector-j-9.0.0.jar.
+
+#### Create a database configuration file
+
+Create a file named `db.properties` in your project directory with the following content:
+
+```ini title="db.properties"
+db.url=jdbc:mysql://your_database_host:3306/your_database_name
+db.username=your_username
+db.password=your_password
+```
+
+Replace the placeholders with your actual MySQL credentials from the Database app in Sailos.
+
+#### Create a DatabaseConfig class
+
+Create a new file named `DatabaseConfig.java` with the following content:
+
+```java title="DatabaseConfig.java"
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+public class DatabaseConfig {
+    private static final Properties properties = new Properties();
+
+    static {
+        try (InputStream input = DatabaseConfig.class.getClassLoader().getResourceAsStream("db.properties")) {
+            if (input == null) {
+                System.out.println("Sorry, unable to find db.properties");
+                System.exit(1);
+            }
+            properties.load(input);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getDbUrl() {
+        return properties.getProperty("db.url");
+    }
+
+    public static String getDbUsername() {
+        return properties.getProperty("db.username");
+    }
+
+    public static String getDbPassword() {
+        return properties.getProperty("db.password");
+    }
+}
+```
+
+The `DatabaseConfig` class is responsible for loading database configuration from the `db.properties` file. It has three static methods that expose the database configuration:
+
+- `getDbUrl()` – Returns the database URL.
+- `getDbUsername()` – Returns the username.
+- `getDbPassword()` – Returns the password.
+
+This class ensures that sensitive database credentials are not hardcoded in the application.
+
+#### Create an Employee class
+
+Create a new file named `Employee.java` with the following content:
+
+```java title="Employee.java"
+public class Employee {
+    private int id;
+    private String name;
+    private String position;
+
+    public Employee(int id, String name, String position) {
+        this.id = id;
+        this.name = name;
+        this.position = position;
+    }
+
+    // Getters and setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getPosition() { return position; }
+    public void setPosition(String position) { this.position = position; }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", position='" + position + '\'' +
+                '}';
+    }
+}
+```
+
+The `Employee` class represents the data model for an employee. It includes fields for id, name, and position, along with a constructor, getters, setters, and a `toString` method for easy printing of employee information.
+
+#### Create a DB class
+
+Create a new file named `DB.java` with the following content:
+
+```java title="DB.java"
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class DB {
+    public static Connection getConnection() throws SQLException {
+        String jdbcUrl = DatabaseConfig.getDbUrl();
+        String user = DatabaseConfig.getDbUsername();
+        String password = DatabaseConfig.getDbPassword();
+
+        return DriverManager.getConnection(jdbcUrl, user, password);
+    }
+
+    public static void createTable() throws SQLException {
+        String sql = "CREATE TABLE IF NOT EXISTS employees (" +
+                     "id INT AUTO_INCREMENT PRIMARY KEY," +
+                     "name VARCHAR(100) NOT NULL," +
+                     "position VARCHAR(100) NOT NULL)";
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+        }
+    }
+
+    public static void insertEmployee(String name, String position) throws SQLException {
+        String sql = "INSERT INTO employees (name, position) VALUES (?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, position);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public static List<Employee> getEmployees() throws SQLException {
+        List<Employee> employees = new ArrayList<>();
+        String sql = "SELECT id, name, position FROM employees";
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                employees.add(new Employee(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getString("position")
+                ));
+            }
+        }
+        return employees;
+    }
+
+    public static void updateEmployee(int id, String name, String position) throws SQLException {
+        String sql = "UPDATE employees SET name = ?, position = ? WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, position);
+            pstmt.setInt(3, id);
+            pstmt.executeUpdate();
+        }
+    }
+
+    public static void deleteEmployee(int id) throws SQLException {
+        String sql = "DELETE FROM employees WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+        }
+    }
+}
+```
+
+The `DB` class is responsible for database operations:
+
+- The `getConnection()` method connects to the MySQL database using the connection parameters from `DatabaseConfig`.
+- It returns a `Connection` object if successful, or throws a `SQLException` if there's an error.
+- Other methods (`createTable`, `insertEmployee`, etc.) use this connection to perform CRUD operations.
+- Each method opens a new connection, performs its operation, and then closes the connection using try-with-resources, ensuring proper resource management.
+
+#### Create the main Java program
+
+Create a new file named `Main.java` with the following content:
+
+```java title="Main.java"
+import java.sql.SQLException;
+import java.util.List;
+
+public class Main {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Connecting to the MySQL database...");
+
+            // Create the employees table
+            DB.createTable();
+            System.out.println("Employees table created (if not exists).");
+
+            // Insert sample employees
+            DB.insertEmployee("John Doe", "Developer");
+            DB.insertEmployee("Jane Smith", "Designer");
+            System.out.println("Sample employees inserted.");
+
+            // Retrieve and display all employees
+            List<Employee> employees = DB.getEmployees();
+            System.out.println("Employees:");
+            for (Employee emp : employees) {
+                System.out.println(emp);
+            }
+
+            // Update an employee
+            DB.updateEmployee(1, "John Doe", "Senior Developer");
+            System.out.println("Employee updated.");
+
+            // Delete an employee
+            DB.deleteEmployee(2);
+            System.out.println("Employee deleted.");
+
+            // Display updated employee list
+            employees = DB.getEmployees();
+            System.out.println("\nUpdated Employees:");
+            for (Employee emp : employees) {
+                System.out.println(emp);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Database operation error: " + e.getMessage());
+        }
+    }
+}
+```
+
+The `Main` class demonstrates the usage of the `DB` class to perform various database operations:
+
+- It creates a table, inserts sample data, retrieves and displays employees, updates an employee, deletes an employee, and displays the updated list.
+- Each operation is wrapped in a try-catch block to handle potential `SQLException`s.
+- The program uses the methods from the `DB` class, which manage their own connections, ensuring that connections are properly opened and closed for each operation.
+
+</div>
+
+## Compile and Run
+
+To compile and run the example, use the following commands in your terminal:
+
+```bash
+javac -cp .:mysql-connector-j-9.0.0.jar *.java
+java -cp .:mysql-connector-j-9.0.0.jar Main
+```
+
+Make sure to replace `mysql-connector-j-9.0.0.jar` with the actual name of your MySQL JDBC driver JAR file.
+
+If everything is set up correctly, you should see output demonstrating the CRUD operations on the employees table.
+
+## Best Practices
+
+1. Use a properties file to store database connection details.
+2. Implement a configuration class to load and provide access to database properties.
+3. Create a separate class for database connection management and operations.
+4. Use try-with-resources to ensure proper closure of database connections.
+5. Use prepared statements to prevent SQL injection.
+6. Handle exceptions appropriately and provide meaningful error messages.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your database credentials in the `db.properties` file.
+2. Ensure your MySQL database is running and accessible from your Devbox environment.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that the MySQL JDBC driver JAR file is in the same directory as your Java files.
+
+For more detailed information on using MySQL with Java, refer to the [official MySQL Connector/J documentation](https://dev.mysql.com/doc/connector-j/en/).

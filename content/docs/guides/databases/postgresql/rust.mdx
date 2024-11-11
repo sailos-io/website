@@ -1,0 +1,166 @@
+---
+title: Rust
+description: Learn how to connect to PostgreSQL databases in Sailos Devbox using Rust
+---
+
+This guide will walk you through the process of connecting to a PostgreSQL database using Rust within your Sailos Devbox project.
+
+## Prerequisites
+
+- [A Sailos Devbox project](/docs/guides/fundamentals/create-a-project) with Rust environment
+- [A PostgreSQL database created using the Database app in Sailos](./)
+
+## Install Required Dependencies
+
+In your Cursor terminal, add the necessary dependencies to your `Cargo.toml` file:
+
+```toml
+[dependencies]
+tokio = { version = "1.28", features = ["full"] }
+sqlx = { version = "0.6", features = ["runtime-tokio-rustls", "postgres"] }
+dotenv = "0.15"
+```
+
+These dependencies include:
+- `tokio`: An asynchronous runtime for Rust
+- `sqlx`: A database toolkit for Rust with async support
+- `dotenv`: A library for loading environment variables from a file
+
+## Connection Setup
+
+<div className='steps [&_h4]:step'>
+
+#### Set up the environment variables
+
+First, let's set up the environment variables for our database connection. Create a `.env` file in your project root with the following content:
+
+```ini title=".env"
+DATABASE_URL=postgres://your_username:your_password@your_database_host:5432/your_database_name
+```
+
+Replace the placeholders with your actual PostgreSQL credentials from the Database app in Sailos.
+
+#### Create the main.rs file
+
+Create a new file named `src/main.rs` with the following content:
+
+```rust title="src/main.rs"
+use sqlx::postgres::PgPoolOptions;
+use sqlx::Row;
+use dotenv::dotenv;
+use std::env;
+ 
+#[tokio::main]
+async fn main() -> Result<(), sqlx::Error> {
+    // Load environment variables from .env file
+    dotenv().ok();
+ 
+    // Get the database URL from the environment
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+ 
+    // Create a connection pool
+    let pool = PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&database_url)
+        .await?;
+ 
+    // Create the employees table if it doesn't exist
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS employees (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            position VARCHAR(100) NOT NULL
+        )
+        "#,
+    )
+    .execute(&pool)
+    .await?;
+ 
+    println!("Table created successfully");
+ 
+    // Insert a sample employee
+    let new_employee = sqlx::query(
+        r#"
+        INSERT INTO employees (name, position)
+        VALUES ($1, $2)
+        RETURNING id, name, position
+        "#,
+    )
+    .bind("John Doe")
+    .bind("Developer")
+    .fetch_one(&pool)
+    .await?;
+ 
+    println!(
+        "Inserted employee: ID: {}, Name: {}, Position: {}",
+        new_employee.get::<i32, _>("id"),
+        new_employee.get::<String, _>("name"),
+        new_employee.get::<String, _>("position")
+    );
+ 
+    // Query all employees
+    let employees = sqlx::query("SELECT id, name, position FROM employees")
+        .fetch_all(&pool)
+        .await?;
+ 
+    println!("All employees:");
+    for employee in employees {
+        println!(
+            "ID: {}, Name: {}, Position: {}",
+            employee.get::<i32, _>("id"),
+            employee.get::<String, _>("name"),
+            employee.get::<String, _>("position")
+        );
+    }
+ 
+    Ok(())
+}
+```
+
+Let's break down the main components of this code:
+
+1. **Imports**: We import necessary modules from `sqlx`, `dotenv`, and `std::env`.
+
+2. **Main function**: The `main` function is marked with `#[tokio::main]` to use Tokio's async runtime.
+
+3. **Environment setup**: We load environment variables from the `.env` file and retrieve the database URL.
+
+4. **Connection pool**: We create a connection pool using `PgPoolOptions`.
+
+5. **Table creation**: We create the `employees` table if it doesn't exist.
+
+6. **Data insertion**: We insert a sample employee into the database.
+
+7. **Data querying**: We query and display all employees in the database.
+
+</div>
+
+## Usage
+
+To run the application, use the following command in your Cursor terminal:
+
+```bash
+cargo run
+```
+
+This will compile and execute the `main` function, demonstrating the connection to the database, table creation, data insertion, and querying.
+
+## Best Practices
+
+1. Use environment variables for database credentials.
+2. Use connection pooling for better performance and resource management.
+3. Use prepared statements (as demonstrated with `sqlx::query`) to prevent SQL injection.
+4. Handle errors appropriately using Rust's `Result` type.
+5. Use async/await for efficient database operations.
+
+## Troubleshooting
+
+If you encounter connection issues:
+
+1. Verify your database credentials in the `.env` file.
+2. Ensure your PostgreSQL database is running and accessible.
+3. Check for any network restrictions in your Devbox environment.
+4. Confirm that all required dependencies are correctly specified in your `Cargo.toml` file.
+
+For more detailed information on using PostgreSQL with Rust, refer to the [sqlx documentation](https://github.com/launchbadge/sqlx).
