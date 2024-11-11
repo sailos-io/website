@@ -1,0 +1,36 @@
+name: Deploy Sailos Website
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    permissions:
+        actions: read # Only required for private GitHub Repo
+        contents: read
+        deployments: write
+        pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        id: vercel-action
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }} #Required
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }} #Required
+          github-comment: false
+          # vercel-args: '--local-config vercel.json' # Optional
+          vercel-args: '--prod'
+          working-directory: ./
