@@ -31,28 +31,11 @@ export default async function Page({
       <DocsTitle>{page.data.title}</DocsTitle>
       <DocsDescription>{page.data.description}</DocsDescription>
       <DocsBody>
-        <div
-          className="relative z-[-1] flex place-items-center
-      before:absolute before:h-[400px] before:w-[140px]
-      before:translate-x-1
-      before:translate-y-[-10px] before:rotate-[-32deg] before:rounded-full 
-      before:bg-gradient-to-r before:from-[#0141ff]
-
-      before:to-[#60c5ff] before:opacity-20
-      before:blur-[100px] before:content-['']
-
-      lg:before:h-[600px] lg:before:w-[240px] 
-      lg:before:translate-x-[600px] 
-      "
-        ></div>
         <MDX
           components={{
             ...defaultMdxComponents,
             img: (props) => (
-              <ImageZoom 
-                {...(props as any)}
-                className="rounded-xl"
-              />
+              <ImageZoom {...(props as any)} className="rounded-xl" />
             ),
           }}
         />

@@ -49,7 +49,7 @@ const Footer = async () => {
             >
               <Image
                 alt={siteConfig.name}
-                src="logo.svg"
+                src="/logo.svg"
                 className="h-7 w-7"
                 width={30}
                 height={30}

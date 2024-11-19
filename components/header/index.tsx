@@ -37,7 +37,7 @@ export default function Header({ lang }: { lang: string }) {
             >
               <Image
                 alt={siteConfig.name}
-                src="logo.svg"
+                src="/logo.svg"
                 className="h-7 w-7"
                 width={28}
                 height={28}
