@@ -1,6 +1,8 @@
 import { type AuthorData, blogAuthors } from '@/config/site';
 import { blog } from '@/lib/source';
 import type { InferPageType } from 'fumadocs-core/source';
+import { DocsLayout } from 'fumadocs-ui/layouts/docs';
+import { DocsPage } from 'fumadocs-ui/page';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -11,41 +13,59 @@ export default async function BlogLayout({
   params,
   children,
 }: {
-  params: Promise<{ slug: string }>;
+  params: { lang: string; slug: string };
   children: ReactNode;
 }) {
-  const page = blog.getPage([(await params).slug]);
+  const page = blog.getPage([params.slug]);
   if (!page) notFound();
 
   return (
-    <main
-      className="mx-auto w-full max-w-[800px] py-10  sm:py-20"
-      itemType="http://schema.org/Article"
-      itemScope
+    <DocsLayout
+      sidebar={{
+        enabled: false,
+      }}
+      tree={blog.pageTree[params.lang]}
     >
-      <h1 className="mb-2 text-3xl font-bold leading-normal" itemProp="name">
-        {page.data.title}
-      </h1>
-      <div className="mb-6 mt-3 flex flex-row flex-wrap items-center gap-1">
-        <div className="flex flex-row flex-wrap gap-1">
-          {page.data.authors.map((author, i) => (
-            <Fragment key={i}>
-              {i !== 0 && <span className="mx-1">+</span>}
-              <SmallAuthor author={blogAuthors[author]} />
-            </Fragment>
-          ))}
-        </div>
+      <DocsPage
+        toc={page.data.toc}
+        tableOfContent={{
+          style: 'clerk',
+          single: false,
+        }}
+      >
+        <main
+          className="mx-auto w-full max-w-[800px] py-10  sm:py-20"
+          itemType="http://schema.org/Article"
+          itemScope
+        >
+          <h1
+            className="mb-2 text-3xl font-bold leading-normal"
+            itemProp="name"
+          >
+            {page.data.title}
+          </h1>
+          <div className="mb-6 mt-3 flex flex-row flex-wrap items-center gap-1">
+            <div className="flex flex-row flex-wrap gap-1">
+              {page.data.authors.map((author, i) => (
+                <Fragment key={i}>
+                  {i !== 0 && <span className="mx-1">+</span>}
+                  <SmallAuthor author={blogAuthors[author]} />
+                </Fragment>
+              ))}
+            </div>
 
-        <div className="text-sm text-muted-foreground">
-          <span className="mr-1">•</span>
-          <span itemProp="datePublished">
-            {new Date(page.data.date).toLocaleDateString()}
-          </span>
-        </div>
-      </div>
-      {children}
-      <Footer page={page} />
-    </main>
+            <div className="text-sm text-muted-foreground">
+              <span className="mr-1">•</span>
+              <span itemProp="datePublished">
+                {new Date(page.data.date).toLocaleDateString()}
+              </span>
+            </div>
+          </div>
+          {children}
+          <Footer page={page} />
+        </main>
+      </DocsPage>
+    </DocsLayout>
   );
 }
 
