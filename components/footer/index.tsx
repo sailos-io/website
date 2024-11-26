@@ -91,13 +91,13 @@ const Footer = async () => {
         <div className="flex items-center space-x-2 text-[10px] font-normal text-custom-secondary-text md:text-sm">
           <FooterLink
             className="text-[10px] font-normal text-custom-secondary-text md:text-sm"
-            href="/terms-of-service"
+            href="/docs/msa/terms-of-service"
           >
             Terms of Service
           </FooterLink>
           <FooterLink
             className="text-[10px] font-normal text-custom-secondary-text md:text-sm"
-            href="/privacy-policy"
+            href="/docs/msa/privacy-policy"
           >
             Privacy Policy
           </FooterLink>

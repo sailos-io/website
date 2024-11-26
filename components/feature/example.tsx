@@ -90,7 +90,7 @@ export default function Example() {
     <div className="mt-[140px]">
       <AnimateElement type="slideUp">
         <div className="text-center text-base font-bold text-black sm:text-4xl">
-          Example
+          Examples
         </div>
         <div className="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {data.map((item, index) => (

@@ -6,44 +6,44 @@ import { AnimateElement } from '../ui/animated-wrapper';
 
 const features = [
   {
-    title: 'Cloud OS',
+    title: 'Enterprise Cloud OS',
     description:
-      'Manage as in a vanilla Kubernetes, create clusters with single-click, and deploy containerized applications automatically',
+      'Enterprise-grade Kubernetes platform with multi-cloud support. Single-click cluster creation and automated container orchestration across AWS, GCP, and Azure.',
     icon: <SailosIcon />,
   },
   {
-    title: 'HA Databases',
+    title: 'Managed Database Suite',
     description:
-      'Instantly deploy distributed databases with built-in high availability. Supports MySQL, Redis, MongoDB, PostgreSQL, and more - no complex multi-node setup required.',
+      'Production-ready databases with 99.99% uptime guarantee. Automated failover, backups, and scaling for MySQL, PostgreSQL, MongoDB, Redis with zero ops overhead.',
     icon: <DatabaseIcon />,
   },
   {
-    title: 'Object Storage',
+    title: 'Global Object Storage',
     description:
-      'Secure cloud data migration with built-in redundancy and disaster recovery. Seamlessly integrates with multi-language SDKs.',
+      'Enterprise-compliant object storage with built-in encryption, versioning, and disaster recovery. Native SDKs for Python, Go, Java, Node.js.',
     icon: <ObjectStorageIcon />,
   },
 ];
 
 const features2 = [
   {
-    title: 'Secure Environment Isolation',
+    title: 'Enterprise-Grade Isolation',
     description:
       'Develop in isolated environments and avoid dependency nightmares. Use consistent, reproducible workspaces for each project, and focus on relevant tasks.',
     icon: '🛡️',
     image: '/images/foundation-2-1.svg',
   },
   {
-    title: 'Unparalleled Performance',
+    title: 'Hyperscale Performance',
     description:
-      'Achieve outstanding performance on our large-scale clusters, all managed by our lightweight, tailored load balancer capable of handling tens of thousands of nodes.',
+      'Industry-leading performance with auto-scaling up to 10,000 nodes. Our proprietary load balancer delivers 3x faster response times than traditional solutions.',
     icon: '🚀',
     image: '/images/foundation-2-2.svg',
   },
   {
-    title: 'Access from Any Network',
+    title: 'Universal Access & Security',
     description:
-      'Get access to applications from the internal network and the Internet, with automatic TLS configuration. Develop securely and flexibly on any networks, anywhere.',
+      'Access applications through any network with automatic TLS support. Develop securely and flexibly on any networks, anywhere.',
     icon: '🌐',
     image: '/images/foundation-2-3.svg',
   },
@@ -53,17 +53,17 @@ const performanceStats = [
   {
     icon: '/images/efficient-1.svg',
     percentage: '90%',
-    description: 'Cost Reduction',
+    description: 'Infrastructure Cost Reduction',
   },
   {
     icon: '/images/efficient-2.svg',
-    percentage: '500%',
-    description: 'Performance Improvement',
+    percentage: '5x',
+    description: 'Faster Development Cycles',
   },
   {
     icon: '/images/efficient-3.svg',
-    percentage: '99.99999%',
-    description: 'Extremely Stable',
+    percentage: '99.99%',
+    description: 'Platform Availability',
   },
   {
     icon: '/images/efficient-4.svg',
@@ -77,7 +77,7 @@ export default function Feature() {
     <div className="mt-52">
       <AnimateElement type="slideUp">
         <div className="text-center text-base font-bold text-black sm:text-4xl">
-          Infrastructure
+          Cloud-Native Infrastructure
         </div>
       </AnimateElement>
 
@@ -158,7 +158,7 @@ export default function Feature() {
 
       <AnimateElement type="slideUp">
         <div className="mt-[200px] text-center text-base font-bold text-black sm:text-4xl">
-          Instant Development Environments
+          Enterprise-Grade Development Platform
         </div>
         <div className="mt-16 flex flex-wrap items-center gap-10 rounded border border-dashed border-[#9DCBE6] px-2 py-9 lg:px-20">
           {performanceStats.map((stat, index) => (

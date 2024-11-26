@@ -38,25 +38,26 @@ export default function Hero() {
 
       <div className="relative flex min-h-[700px] w-full  flex-col overflow-hidden rounded-lg pb-0 pt-6 sm:py-14 lg:min-h-[1000px] lg:py-20">
         <div className="z-10 whitespace-pre-wrap text-center tracking-tighter text-black">
-          <TypingAnimation
-            className=" text-2xl font-bold leading-[97px] sm:text-[56px] lg:text-[64px] xl:text-[80px]"
-            text="Sailos Devbox"
-          />
           <AnimateElement type="slideUp" delay={0.2} duration={0.6}>
+            <div
+              className="text-2xl font-bold leading-[97px] sm:text-[56px] lg:text-[64px] xl:text-[80px]"
+              style={{ letterSpacing: '0.15px' }}
+            >
+              Ship 10x Faster with Sailos DevBox
+            </div>
             <div
               className="mx-auto mb-6 mt-0  max-w-[700px] text-xs font-medium text-custom-secondary-text sm:my-6 sm:text-base"
               style={{ letterSpacing: '0.15px' }}
             >
-              An all-in-one platform for integrated online development, testing,
-              and production. Create environments and database dependencies with
-              a single click. Seamlessly develop at local with your IDE,
-              streamlining setup and deploy applications automatically.
+              Your Complete Cloud Development Platform That Cuts Deployment Time
+              by 90%. Transform Your Development Workflow: Build, Test & Deploy in
+              One Unified Cloud Environment
             </div>
 
             <div className="flex items-center justify-center gap-4 text-base font-medium">
               <GetStartedButton />
               <div className="flex cursor-pointer items-center justify-center gap-[6px] rounded-md bg-[#FAFCFF] px-4 py-2 text-custom-primary-text shadow-button hover:bg-[#F1F5FB] sm:px-5">
-                Contact Us
+                Talk to Us
               </div>
             </div>
           </AnimateElement>
