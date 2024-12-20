@@ -102,7 +102,7 @@ const Footer = async () => {
             Privacy Policy
           </FooterLink>
           <div>|</div>
-          <div>Copyright © 2024 Fumadocs. All rights reserved.</div>
+          <div>Copyright © 2024 Sailos. All rights reserved.</div>
         </div>
         <div className="flex space-x-4">
           <Link

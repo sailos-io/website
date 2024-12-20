@@ -24,7 +24,7 @@ export const AnimateElement: React.FC<AnimateElementProps> = ({
   children,
   type,
   delay = 0.2,
-  duration = 0.6,
+  duration = 0.4,
   className,
 }) => {
   const ref = useRef(null);

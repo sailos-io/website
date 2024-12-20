@@ -8,19 +8,8 @@ export default function Video() {
   const [isPlaying, setIsPlaying] = useState(false);
   const playerRef = useRef<ReactPlayer>(null);
 
-  const handlePlay = () => {
-    setIsPlaying(true);
-    playerRef.current?.seekTo(0);
-  };
-
-  useEffect(() => {
-    if (playerRef.current) {
-      playerRef.current.getInternalPlayer()?.load();
-    }
-  }, []);
-
   return (
-    <div className="relative w-full mt-20">
+    <div className="relative mt-20 w-full">
       <div className="relative z-20 mx-auto max-w-[1000px] px-4">
         <AnimateElement type="slideUp" delay={0.2} duration={0.6}>
           <div className="aspect-video w-full">
@@ -31,13 +20,16 @@ export default function Video() {
               height="100%"
               playing={isPlaying}
               controls={true}
+              onReady={() => {
+                console.log('Video is ready to play');
+              }}
               config={{
                 youtube: {
                   playerVars: {
                     modestbranding: 1,
-                    rel: 0
-                  }
-                }
+                    rel: 0,
+                  },
+                },
               }}
             />
           </div>
