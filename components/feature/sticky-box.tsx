@@ -10,9 +10,9 @@ const content = [
     title: 'Instant Cloud Workspaces',
     subtitle: 'Development at the speed of thought',
     description:
-      'Launch production-ready development environments in seconds. Share code, configs and data seamlessly with your team - all powered by Sailos\'s enterprise-grade cloud platform.',
+      "Launch production-ready development environments in seconds. Share code, configs and data seamlessly with your team - all powered by Sailos's enterprise-grade cloud platform.",
     content: (
-      <div className="relative aspect-[700/450] w-full overflow-hidden rounded-lg bg-[#FAFCFF] shadow-sticky-box group">
+      <div className="group relative aspect-[700/450] w-full overflow-hidden rounded-lg bg-[#FAFCFF] shadow-sticky-box">
         <Image
           fill
           src="/images/sticky-box-1.svg"
@@ -22,8 +22,8 @@ const content = [
       </div>
     ),
     icon: (
-      <div 
-        role="img" 
+      <div
+        role="img"
         aria-label="Cloud Development Icon"
         className="transition-transform duration-300 hover:scale-110"
       >
@@ -42,7 +42,7 @@ const content = [
     description:
       'Accelerate your workflow with automated environment setup, seamless IDE integration, and unified development, testing and production environments.',
     content: (
-      <div className="relative aspect-[700/450] w-full overflow-hidden rounded-lg bg-[#FAFCFF] shadow-sticky-box group">
+      <div className="group relative aspect-[700/450] w-full overflow-hidden rounded-lg bg-[#FAFCFF] shadow-sticky-box">
         <Image
           fill
           src="/images/sticky-box-2.svg"
@@ -52,8 +52,8 @@ const content = [
       </div>
     ),
     icon: (
-      <div 
-        role="img" 
+      <div
+        role="img"
         aria-label="Workflow Icon"
         className="transition-transform duration-300 hover:scale-110"
       >
@@ -72,7 +72,7 @@ const content = [
     description:
       'Deploy applications with confidence - no container expertise needed. Let Devbox handle versioning, container builds and orchestration while you focus on coding.',
     content: (
-      <div className="relative aspect-[700/450] max-h-[400px] w-full rounded-lg bg-[#FAFCFF] shadow-sticky-box group">
+      <div className="group relative aspect-[700/450] max-h-[400px] w-full rounded-lg bg-[#FAFCFF] shadow-sticky-box">
         <Image
           fill
           src="/images/sticky-box-3.svg"
@@ -82,8 +82,8 @@ const content = [
       </div>
     ),
     icon: (
-      <div 
-        role="img" 
+      <div
+        role="img"
         aria-label="Deployment Icon"
         className="transition-transform duration-300 hover:scale-110"
       >
@@ -125,10 +125,10 @@ export function StickyBox() {
                   {item.icon}
                 </div>
                 <div>
-                  <h2 className="mb-2 text-base font-bold leading-tight sm:text-2xl sm:mb-3">
+                  <h2 className="mb-2 text-base font-bold leading-tight sm:mb-3 sm:text-2xl">
                     {item.title}
                   </h2>
-                  <p className="text-sm text-blue-600 mb-3 sm:text-base">
+                  <p className="mb-3 text-sm text-blue-600 sm:text-base">
                     {item.subtitle}
                   </p>
                   <div className="text-sm leading-relaxed text-[#4E6185] sm:text-lg">
