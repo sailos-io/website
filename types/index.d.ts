@@ -10,6 +10,7 @@ export type SiteConfig = {
   links: {
     github: string;
     twitter: string;
+    discord: string;
   };
   ogImage: string;
 };

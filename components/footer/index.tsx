@@ -107,7 +107,7 @@ const Footer = async () => {
         <div className="flex space-x-4">
           <Link
             className="flex size-8 items-center justify-center rounded-full bg-[#FAFCFF] object-center hover:bg-[#1118240D]"
-            href="https://github.com"
+            href={siteConfig.links.github}
             aria-label="GitHub"
           >
             <GithubIcon />
@@ -115,17 +115,10 @@ const Footer = async () => {
 
           <Link
             className="flex size-8 items-center justify-center rounded-full bg-[#FAFCFF] object-center hover:bg-[#1118240D]"
-            href="https://discord.com"
+            href={siteConfig.links.discord}
             aria-label="Discord"
           >
             <DiscordIcon />
-          </Link>
-          <Link
-            className="flex size-8 items-center justify-center rounded-full bg-[#FAFCFF] object-center hover:bg-[#1118240D]"
-            href="https://twitter.com"
-            aria-label="Twitter"
-          >
-            <FrameIcon />
           </Link>
         </div>
       </div>

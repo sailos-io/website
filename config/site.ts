@@ -12,8 +12,9 @@ export const siteConfig: SiteConfig = {
     author: '',
   },
   links: {
-    github: process.env.NEXT_PUBLIC_OPEN_SOURCE_URL || '',
+    github: 'https://github.com/sailos-io/website',
     twitter: '',
+    discord: 'https://discord.gg/cmUg8fDHwv',
   },
   ogImage: `${process.env.NEXT_PUBLIC_APP_URL}/og.png?${new Date().getTime()}`,
 };
