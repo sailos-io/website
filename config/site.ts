@@ -13,7 +13,7 @@ export const siteConfig: SiteConfig = {
   },
   links: {
     github: 'https://github.com/sailos-io/website',
-    twitter: '',
+    twitter: 'https://x.com/Sailos_io',
     discord: 'https://discord.gg/cmUg8fDHwv',
   },
   ogImage: `${process.env.NEXT_PUBLIC_APP_URL}/og.png?${new Date().getTime()}`,
