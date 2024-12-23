@@ -11,6 +11,7 @@ export type SiteConfig = {
     github: string;
     twitter: string;
     discord: string;
+    youtube: string;
   };
   ogImage: string;
 };

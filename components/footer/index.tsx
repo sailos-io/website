@@ -145,6 +145,19 @@ const Footer = async () => {
               </defs>
             </svg>
           </Link>
+          <Link
+            className="flex size-8 items-center justify-center rounded-full bg-[#FAFCFF] object-center hover:bg-[#1118240D]"
+            href={siteConfig.links.youtube}
+            aria-label="YouTube"
+          >
+            <Image
+              src="/icons/youtube.svg"
+              alt="YouTube"
+              width={16}
+              height={16}
+              className="h-4 w-4"
+            />
+          </Link>
         </div>
       </div>
     </div>

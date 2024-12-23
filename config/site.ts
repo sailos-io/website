@@ -15,6 +15,7 @@ export const siteConfig: SiteConfig = {
     github: 'https://github.com/sailos-io/website',
     twitter: 'https://x.com/Sailos_io',
     discord: 'https://discord.gg/cmUg8fDHwv',
+    youtube: 'https://www.youtube.com/@sailos-devbox',
   },
   ogImage: `${process.env.NEXT_PUBLIC_APP_URL}/og.png?${new Date().getTime()}`,
 };
