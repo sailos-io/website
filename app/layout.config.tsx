@@ -9,7 +9,7 @@ import Image from 'next/image';
  * Docs Layout: app/docs/layout.tsx
  */
 export const baseOptions: BaseLayoutProps = {
-  i18n: false,
+  i18n: true,
   disableThemeSwitch: true,
   nav: {
     title: (

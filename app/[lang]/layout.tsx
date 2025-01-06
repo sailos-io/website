@@ -16,7 +16,7 @@ export default function LocaleLayout({
       locales={locales}
       translations={
         {
-          zh: {
+          'zh-cn': {
             search: '搜索',
           },
         }[params.lang]
