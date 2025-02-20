@@ -1,13 +1,13 @@
 ---
 title: Node.js
-description: 在 Sealos Devbox 中使用 Node.js 连接 Redis 数据库的完整指南
+description: 在 Sealos DevBox 中使用 Node.js 连接 Redis 数据库的完整指南
 ---
 
-本文将指导您如何在 Sealos Devbox 项目中使用 Node.js 连接和操作 Redis 数据库。
+本文将指导您如何在 Sealos DevBox 项目中使用 Node.js 连接和操作 Redis 数据库。
 
 ## 准备工作
 
-- [已创建并配置好 Node.js 运行环境的 Sealos Devbox 项目](/docs/guides/fundamentals/create-a-project)
+- [已创建并配置好 Node.js 运行环境的 Sealos DevBox 项目](/docs/guides/fundamentals/create-a-project)
 - [已在 Sealos 桌面数据库应用中创建的 Redis 数据库实例](./)
 
 ## 安装依赖包
@@ -76,7 +76,7 @@ async function testRedisOperations() {
     console.log('Connected to Redis');
 
     // Set a key
-    await client.set('mykey', 'Hello from Sealos Devbox!');
+    await client.set('mykey', 'Hello from Sealos DevBox!');
     console.log('Key set successfully');
 
     // Get a key
@@ -131,7 +131,7 @@ node test-redis.js
 
 1. 检查 `.env` 文件中的 Redis 连接信息是否正确
 2. 确认 Redis 数据库实例是否正常运行且可访问
-3. 检查 Devbox 运行环境的网络配置是否有限制
+3. 检查 DevBox 运行环境的网络配置是否有限制
 4. 验证 `redis` 依赖包是否正确安装
 
 更多关于 Node.js Redis 客户端的详细信息，请参考 [Node Redis 官方文档](https://github.com/redis/node-redis)。

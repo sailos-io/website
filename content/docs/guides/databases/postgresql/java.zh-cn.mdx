@@ -1,14 +1,14 @@
 ---
 title: Java
-description: 在 Sealos Devbox 中使用 Java 连接 PostgreSQL 数据库的完整指南
+description: 在 Sealos DevBox 中使用 Java 连接 PostgreSQL 数据库的完整指南
 ---
 
-本教程将指导您如何在 Sealos Devbox 开发环境中使用 Java 语言连接 PostgreSQL 数据库，并实现基本的增删改查 (CRUD) 操作。
+本教程将指导您如何在 Sealos DevBox 开发环境中使用 Java 语言连接 PostgreSQL 数据库，并实现基本的增删改查 (CRUD) 操作。
 
 ## 准备工作
 
 在开始之前，请确保：
-- [已创建并配置好 Java 环境的 Sealos Devbox 项目](/docs/guides/fundamentals/create-a-project)
+- [已创建并配置好 Java 环境的 Sealos DevBox 项目](/docs/guides/fundamentals/create-a-project)
 - [已在 Sealos 数据库应用中创建好 PostgreSQL 数据库实例](./)
 
 ## 环境配置
@@ -286,7 +286,7 @@ java -cp .:postgresql-42.6.0.jar Main
 
 1. 核实 `db.properties` 文件中的数据库连接参数是否正确
 2. 确认 PostgreSQL 数据库服务是否正常运行且可访问
-3. 检查 Devbox 环境的网络连接状态
+3. 检查 DevBox 环境的网络连接状态
 4. 验证 PostgreSQL JDBC 驱动是否正确放置在项目目录中
 
 更多关于 Java 操作 PostgreSQL 的详细信息，请参考 [PostgreSQL JDBC 驱动官方文档](https://jdbc.postgresql.org/documentation/head/index.html)。

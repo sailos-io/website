@@ -2,21 +2,21 @@
 title: Architecture
 ---
 
-Sealos Devbox is an advanced development environment solution that leverages cloud-native Container and Kubernetes technologies to offer a unified and flexible development Runtime. Its key feature is simulating a traditional virtual machine experience while maintaining containerization benefits.
+Sealos DevBox is an advanced development environment solution that leverages cloud-native Container and Kubernetes technologies to offer a unified and flexible development Runtime. Its key feature is simulating a traditional virtual machine experience while maintaining containerization benefits.
 
 ## Architecture
 
-Sealos Devbox is built on a layered architecture, comprising these key components:
+Sealos DevBox is built on a layered architecture, comprising these key components:
 
 ![](./images/architecture.zh-cn.png)
 
 
 ## Control Flow
 
-Devbox implements a decoupled front-end and back-end design:
+DevBox implements a decoupled front-end and back-end design:
 
 1. Users trigger actions via the web interface or plugins
-2. Devbox Controller receives and processes these requests
+2. DevBox Controller receives and processes these requests
 3. Controller translates the processed instructions into Kubernetes API calls
 4. Kubernetes executes the corresponding Container operations
 
@@ -26,7 +26,7 @@ Devbox implements a decoupled front-end and back-end design:
 
 ## State Persistence Mechanism
 
-Devbox employs an intelligent state preservation system to maintain user environment consistency:
+DevBox employs an intelligent state preservation system to maintain user environment consistency:
 
 ### Automatic Saving
 

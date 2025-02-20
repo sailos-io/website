@@ -1,18 +1,18 @@
 ---
 title: Python
-description: Learn how to connect to Kafka in Sealos Devbox using Python
+description: Learn how to connect to Kafka in Sealos DevBox using Python
 ---
 
-This guide will walk you through the process of connecting to Kafka using Python within your Sealos Devbox project.
+This guide will walk you through the process of connecting to Kafka using Python within your Sealos DevBox project.
 
 ## Prerequisites
 
-- [A Sealos Devbox project](/docs/guides/fundamentals/create-a-project) with Python environment
+- [A Sealos DevBox project](/docs/guides/fundamentals/create-a-project) with Python environment
 - [A Kafka cluster created using the Database app in Sealos](./)
 
 ## Activating the Python Environment
 
-Before you start, you need to activate the Python virtual environment in your Devbox. Open the terminal within Cursor IDE and run:
+Before you start, you need to activate the Python virtual environment in your DevBox. Open the terminal within Cursor IDE and run:
 
 ```bash
 source ./bin/activate
@@ -106,7 +106,7 @@ def test_kafka_producer():
     producer = get_kafka_producer()
     if producer:
         topic = os.getenv('KAFKA_TOPIC')
-        message = "Hello from Sealos Devbox!"
+        message = "Hello from Sealos DevBox!"
         producer.send(topic, message.encode('utf-8'))
         producer.flush()
         print(f"Message sent to topic {topic}: {message}")
@@ -161,6 +161,6 @@ If you encounter connection issues:
 2. Verify that your Kafka cluster is running and accessible.
 3. Double-check your Kafka credentials in the `.env` file.
 4. Check the Kafka logs in the Database app for any error messages.
-5. Make sure your Devbox environment has network access to the Kafka bootstrap servers.
+5. Make sure your DevBox environment has network access to the Kafka bootstrap servers.
 
 For more detailed information on using Kafka with Python, refer to the [kafka-python documentation](https://kafka-python.readthedocs.io/).

@@ -1,13 +1,13 @@
 ---
 title: Java
-description: 在 Sealos Devbox 中使用 Java 连接 Kafka 的完整指南
+description: 在 Sealos DevBox 中使用 Java 连接 Kafka 的完整指南
 ---
 
-本文介绍如何在 Sealos Devbox 环境中使用 Java 连接和操作 Kafka。
+本文介绍如何在 Sealos DevBox 环境中使用 Java 连接和操作 Kafka。
 
 ## 准备工作
 
-- [已创建并配置好 Java 环境的 Sealos Devbox 项目](/docs/guides/fundamentals/create-a-project)
+- [已创建并配置好 Java 环境的 Sealos DevBox 项目](/docs/guides/fundamentals/create-a-project)
 - [已通过 Sealos 数据库应用创建 Kafka 集群](./)
 
 ## 项目配置
@@ -134,7 +134,7 @@ public class KafkaProducerExample {
         Producer<String, String> producer = new KafkaProducer<>(props);
 
         String topic = props.getProperty("topic");
-        String message = "Hello from Sealos Devbox!";
+        String message = "Hello from Sealos DevBox!";
 
         ProducerRecord<String, String> record = new ProducerRecord<>(topic, message);
 

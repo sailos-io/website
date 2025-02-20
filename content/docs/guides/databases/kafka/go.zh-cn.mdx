@@ -1,13 +1,13 @@
 ---
 title: Go
-description: 在 Sealos Devbox 中使用 Go 连接 Kafka 的完整指南
+description: 在 Sealos DevBox 中使用 Go 连接 Kafka 的完整指南
 ---
 
-本文将详细介绍如何在 Sealos Devbox 中使用 Go 语言连接和操作 Kafka。
+本文将详细介绍如何在 Sealos DevBox 中使用 Go 语言连接和操作 Kafka。
 
 ## 准备工作
 
-- [已创建并配置好 Go 环境的 Sealos Devbox 项目](/docs/guides/fundamentals/create-a-project)
+- [已创建并配置好 Go 环境的 Sealos DevBox 项目](/docs/guides/fundamentals/create-a-project)
 - [已通过 Sealos 数据库应用创建 Kafka 集群](./)
 
 ## 安装依赖
@@ -26,7 +26,7 @@ go get github.com/confluentinc/confluent-kafka-go/v2/kafka
 
 ## 系统依赖
 
-由于 `confluent-kafka-go` 包依赖于 `librdkafka`，您需要在 Devbox 开发环境中安装相关系统依赖。请在 Cursor 终端中执行以下命令：
+由于 `confluent-kafka-go` 包依赖于 `librdkafka`，您需要在 DevBox 开发环境中安装相关系统依赖。请在 Cursor 终端中执行以下命令：
 
 ```bash
 sudo apt-get update

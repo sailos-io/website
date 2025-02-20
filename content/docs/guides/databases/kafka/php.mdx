@@ -1,13 +1,13 @@
 ---
 title: PHP
-description: Learn how to connect to Kafka in Sealos Devbox using PHP
+description: Learn how to connect to Kafka in Sealos DevBox using PHP
 ---
 
-This guide will walk you through the process of connecting to Kafka using PHP within your Sealos Devbox project.
+This guide will walk you through the process of connecting to Kafka using PHP within your Sealos DevBox project.
 
 ## Prerequisites
 
-- [A Sealos Devbox project](/docs/guides/fundamentals/create-a-project) with PHP environment
+- [A Sealos DevBox project](/docs/guides/fundamentals/create-a-project) with PHP environment
 - [A Kafka cluster created using the Database app in Sealos](./)
 
 ## Install Required Extensions
@@ -61,7 +61,7 @@ $producer = new RdKafka\Producer($conf);
 
 $topic = $producer->newTopic($config['topic']);
 
-$message = "Hello from Sealos Devbox!";
+$message = "Hello from Sealos DevBox!";
 $topic->produce(RD_KAFKA_PARTITION_UA, 0, $message);
 
 $producer->flush(10000);
@@ -142,7 +142,7 @@ If you encounter connection issues:
 
 1. Verify your Kafka broker address in the `config.php` file.
 2. Ensure your Kafka cluster is running and accessible.
-3. Check for any network restrictions in your Devbox environment.
+3. Check for any network restrictions in your DevBox environment.
 4. Confirm that the `rdkafka` extension is correctly installed and enabled.
 
 For more detailed information on using Kafka with PHP, refer to the [php-rdkafka documentation](https://github.com/arnaud-lb/php-rdkafka).

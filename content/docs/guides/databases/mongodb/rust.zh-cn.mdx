@@ -1,15 +1,15 @@
 ---
 title: Rust
-description: 在 Sealos Devbox 中使用 Rust 连接 MongoDB 数据库的完整指南
+description: 在 Sealos DevBox 中使用 Rust 连接 MongoDB 数据库的完整指南
 ---
 
-本文将详细介绍如何在 Sealos Devbox 项目中使用 Rust 语言连接和操作 MongoDB 数据库。
+本文将详细介绍如何在 Sealos DevBox 项目中使用 Rust 语言连接和操作 MongoDB 数据库。
 
 ## 准备工作
 
 在开始之前，请确保：
 
-- [已创建并配置好 Rust 环境的 Sealos Devbox 项目](/docs/guides/fundamentals/create-a-project)
+- [已创建并配置好 Rust 环境的 Sealos DevBox 项目](/docs/guides/fundamentals/create-a-project)
 - [已在 Sealos 数据库应用中创建 MongoDB 数据库](./)
 
 ## 添加依赖项
@@ -76,7 +76,7 @@ async fn main() -> mongodb::error::Result<()> {
     let mut client_options = ClientOptions::parse(mongodb_uri).await?;
  
     // Manually set an option
-    client_options.app_name = Some("Sealos Devbox Rust App".to_string());
+    client_options.app_name = Some("Sealos DevBox Rust App".to_string());
  
     // Get a handle to the deployment
     let client = Client::with_options(client_options)?;

@@ -1,13 +1,13 @@
 ---
 title: Go
-description: Learn how to connect to Kafka in Sealos Devbox using Go
+description: Learn how to connect to Kafka in Sealos DevBox using Go
 ---
 
-This guide will walk you through the process of connecting to Kafka using Go within your Sealos Devbox project.
+This guide will walk you through the process of connecting to Kafka using Go within your Sealos DevBox project.
 
 ## Prerequisites
 
-- [A Sealos Devbox project](/docs/guides/fundamentals/create-a-project) with Go environment
+- [A Sealos DevBox project](/docs/guides/fundamentals/create-a-project) with Go environment
 - [A Kafka cluster created using the Database app in Sealos](./)
 
 ## Install Required Packages
@@ -24,7 +24,7 @@ This command installs:
 
 ## System Dependencies
 
-The `confluent-kafka-go` package requires `librdkafka` as a system dependency. In Sealos Devbox, you might need to install it manually. Run the following commands in your Cursor terminal:
+The `confluent-kafka-go` package requires `librdkafka` as a system dependency. In Sealos DevBox, you might need to install it manually. Run the following commands in your Cursor terminal:
 
 ```bash
 sudo apt-get update
@@ -190,7 +190,7 @@ If you encounter connection issues:
 
 1. Verify your Kafka broker address in the `broker` variable.
 2. Ensure your Kafka cluster is running and accessible.
-3. Check for any network restrictions in your Devbox environment.
+3. Check for any network restrictions in your DevBox environment.
 4. Confirm that the required packages and system dependencies are correctly installed.
 5. If you encounter `cgo` related errors, make sure you have the necessary build tools installed (`sudo apt-get install build-essential`).
 

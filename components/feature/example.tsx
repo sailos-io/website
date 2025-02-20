@@ -11,19 +11,19 @@ const data = [
     url: '/docs/examples/build-your-own-discord-bot',
   },
   {
-    title: 'Comprehensive Guide to connecting to PostgreSQL databases in Sealos Devbox using Node.js',
+    title: 'Comprehensive Guide to connecting to PostgreSQL databases in Sealos DevBox using Node.js',
     url: '/docs/guides/databases/postgresql/nodejs',
   },
   {
-    title: 'Comprehensive Guide to connecting to PostgreSQL databases in Sealos Devbox using Python',
+    title: 'Comprehensive Guide to connecting to PostgreSQL databases in Sealos DevBox using Python',
     url: '/docs/guides/databases/postgresql/python',
   },
   {
-    title: 'Comprehensive Guide to connecting to PostgreSQL databases in Sealos Devbox using Go',
+    title: 'Comprehensive Guide to connecting to PostgreSQL databases in Sealos DevBox using Go',
     url: '/docs/guides/databases/postgresql/go',
   },
   {
-    title: 'Comprehensive Guide to connecting to PostgreSQL databases in Sealos Devbox using Java',
+    title: 'Comprehensive Guide to connecting to PostgreSQL databases in Sealos DevBox using Java',
     url: '/docs/guides/databases/postgresql/java',
   },
 ];

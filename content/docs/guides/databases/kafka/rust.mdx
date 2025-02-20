@@ -1,13 +1,13 @@
 ---
 title: Rust
-description: Learn how to connect to Kafka in Sealos Devbox using Rust
+description: Learn how to connect to Kafka in Sealos DevBox using Rust
 ---
 
-This guide will walk you through the process of connecting to Kafka using Rust within your Sealos Devbox project.
+This guide will walk you through the process of connecting to Kafka using Rust within your Sealos DevBox project.
 
 ## Prerequisites
 
-- [A Sealos Devbox project](/docs/guides/fundamentals/create-a-project) with Rust environment
+- [A Sealos DevBox project](/docs/guides/fundamentals/create-a-project) with Rust environment
 - [A Kafka cluster created using the Database app in Sealos](./)
 
 ## Install Required Dependencies
@@ -74,7 +74,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let delivery_status = producer
         .send(
             FutureRecord::to(&topic)
-                .payload("Hello from Sealos Devbox!")
+                .payload("Hello from Sealos DevBox!")
                 .key("key"),
             Duration::from_secs(0),
         )
@@ -151,8 +151,8 @@ This will compile and execute the `main` function, demonstrating the connection 
 If you encounter connection issues:
 
 1. Verify your Kafka broker addresses in the `.env` file.
-2. Ensure your Kafka cluster is running and accessible from your Devbox environment.
-3. Check for any network restrictions in your Devbox environment.
+2. Ensure your Kafka cluster is running and accessible from your DevBox environment.
+3. Check for any network restrictions in your DevBox environment.
 4. Confirm that all required dependencies are correctly specified in your `Cargo.toml` file.
 
 For more detailed information on using Kafka with Rust, refer to the [rdkafka documentation](https://docs.rs/rdkafka).

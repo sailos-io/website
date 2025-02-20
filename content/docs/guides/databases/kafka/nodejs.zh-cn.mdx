@@ -1,13 +1,13 @@
 ---
 title: Node.js
-description: 在 Sealos Devbox 中使用 Node.js 连接 Kafka 的完整指南
+description: 在 Sealos DevBox 中使用 Node.js 连接 Kafka 的完整指南
 ---
 
-本文将指导您如何在 Sealos Devbox 中使用 Node.js 连接和操作 Kafka。
+本文将指导您如何在 Sealos DevBox 中使用 Node.js 连接和操作 Kafka。
 
 ## 准备工作
 
-- [已创建并配置好 Node.js 环境的 Sealos Devbox 项目](/docs/guides/fundamentals/create-a-project)
+- [已创建并配置好 Node.js 环境的 Sealos DevBox 项目](/docs/guides/fundamentals/create-a-project)
 - [已通过 Sealos 数据库应用创建 Kafka 集群](./)
 
 ## 安装依赖包
@@ -90,7 +90,7 @@ async function produceMessage() {
     const result = await producer.send({
       topic: process.env.KAFKA_TOPIC,
       messages: [
-        { value: 'Hello from Sealos Devbox!' },
+        { value: 'Hello from Sealos DevBox!' },
       ],
     });
     console.log('Message sent successfully', result);

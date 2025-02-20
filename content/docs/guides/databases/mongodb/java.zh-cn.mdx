@@ -1,13 +1,13 @@
 ---
 title: Java
-description: 在 Sealos Devbox 中使用 Java 连接并操作 MongoDB 数据库的详细指南
+description: 在 Sealos DevBox 中使用 Java 连接并操作 MongoDB 数据库的详细指南
 ---
 
-本教程将详细介绍如何在 Sealos Devbox 项目中使用 Java 语言连接和操作 MongoDB 数据库。
+本教程将详细介绍如何在 Sealos DevBox 项目中使用 Java 语言连接和操作 MongoDB 数据库。
 
 ## 准备工作
 
-- [已在 Sealos Devbox 中配置好 Java 开发环境的项目](/docs/guides/fundamentals/create-a-project)
+- [已在 Sealos DevBox 中配置好 Java 开发环境的项目](/docs/guides/fundamentals/create-a-project)
 - [通过 Sealos 数据库应用创建的 MongoDB 实例](./)
 
 ## 项目配置
@@ -296,8 +296,8 @@ java -jar target/mongodb-java-example-1.0-SNAPSHOT.jar
 如果遇到连接问题，请按以下步骤进行排查：
 
 1. 检查 `mongodb.properties` 文件中的连接信息是否正确
-2. 确认 MongoDB 数据库服务是否正常运行，且可以从 Devbox 环境访问
-3. 检查 Devbox 环境的网络设置是否有访问限制
+2. 确认 MongoDB 数据库服务是否正常运行，且可以从 DevBox 环境访问
+3. 检查 DevBox 环境的网络设置是否有访问限制
 4. 验证 `pom.xml` 中的 MongoDB Java 驱动依赖配置是否正确
 5. 确保使用的 Java 版本符合要求 (本示例使用 OpenJDK 17)
 
