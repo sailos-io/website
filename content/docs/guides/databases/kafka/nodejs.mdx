@@ -1,13 +1,13 @@
 ---
 title: Node.js
-description: Learn how to connect to Kafka in Sealos Devbox using Node.js
+description: Learn how to connect to Kafka in Sealos DevBox using Node.js
 ---
 
-This guide will walk you through the process of connecting to Kafka using Node.js within your Sealos Devbox project.
+This guide will walk you through the process of connecting to Kafka using Node.js within your Sealos DevBox project.
 
 ## Prerequisites
 
-- [A Sealos Devbox project](/docs/guides/fundamentals/create-a-project) with Node.js environment
+- [A Sealos DevBox project](/docs/guides/fundamentals/create-a-project) with Node.js environment
 - [A Kafka cluster created using the Database app in Sealos](./)
 
 ## Install Required Packages
@@ -90,7 +90,7 @@ async function produceMessage() {
     const result = await producer.send({
       topic: process.env.KAFKA_TOPIC,
       messages: [
-        { value: 'Hello from Sealos Devbox!' },
+        { value: 'Hello from Sealos DevBox!' },
       ],
     });
     console.log('Message sent successfully', result);
@@ -193,7 +193,7 @@ If you encounter connection issues:
 
 1. Verify your Kafka broker address in the `.env` file.
 2. Ensure your Kafka cluster is running and accessible.
-3. Check for any network restrictions in your Devbox environment.
+3. Check for any network restrictions in your DevBox environment.
 4. Confirm that the required packages are correctly installed.
 
 For more detailed information on using Kafka with Node.js, refer to the [KafkaJS documentation](https://kafka.js.org/).

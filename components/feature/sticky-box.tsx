@@ -70,7 +70,7 @@ const content = [
     title: 'Effortless Continuous Delivery',
     subtitle: 'Deploy with confidence',
     description:
-      'Deploy applications with confidence - no container expertise needed. Let Devbox handle versioning, container builds and orchestration while you focus on coding.',
+      'Deploy applications with confidence - no container expertise needed. Let DevBox handle versioning, container builds and orchestration while you focus on coding.',
     content: (
       <div className="group relative aspect-[700/450] max-h-[400px] w-full rounded-lg bg-[#FAFCFF] shadow-sticky-box">
         <Image

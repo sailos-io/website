@@ -1,27 +1,27 @@
 ---
 title: 快速开始
 icon: Album
-keywords: [Sealos Devbox, Next.js, 云开发, Kubernetes, OCI 镜像, Cursor IDE, 远程开发, 云部署, 容器化, DevOps]
-description: 本指南介绍如何使用 Sealos Devbox 来创建、开发和部署 Next.js 应用，内容包括项目设置、Cursor IDE 远程开发以及云端部署。
+keywords: [Sealos DevBox, Next.js, 云开发, Kubernetes, OCI 镜像, Cursor IDE, 远程开发, 云部署, 容器化, DevOps]
+description: 本指南介绍如何使用 Sealos DevBox 来创建、开发和部署 Next.js 应用，内容包括项目设置、Cursor IDE 远程开发以及云端部署。
 ---
 
-[Sealos Devbox](https://sealos.run/devbox) 是一个一站式云开发平台，集**本地开发、线上测试、打包上线**为一体。通过简单的点击操作，即可快速创建所需的环境和数据库依赖。开发者可以使用熟悉的本地 IDE 进行开发，同时享受简化的环境配置流程和自动化的应用部署体验。
+[Sealos DevBox](https://sealos.run/devbox) 是一个一站式云开发平台，集**本地开发、线上测试、打包上线**为一体。通过简单的点击操作，即可快速创建所需的环境和数据库依赖。开发者可以使用熟悉的本地 IDE 进行开发，同时享受简化的环境配置流程和自动化的应用部署体验。
 
-**本指南将带你使用 Sealos Devbox 创建一个基础的 Next.js 示例项目。**
+**本指南将带你使用 Sealos DevBox 创建一个基础的 Next.js 示例项目。**
 
-## 创建 Devbox 项目
+## 创建 DevBox 项目
 
 <div className='steps [&_h4]:step'>
 
 <h4>选择开发框架</h4>
 
-访问 [Sealos Cloud](https://cloud.sealos.run)，点击 `Devbox` 图标，然后点击 "新建项目" 按钮。在 "运行环境" 配置中，选择 `Next.js` 作为开发框架，并通过滑块调整项目所需的 CPU 核心数和内存大小。
+访问 [Sealos Cloud](https://cloud.sealos.run)，点击 `DevBox` 图标，然后点击 "新建项目" 按钮。在 "运行环境" 配置中，选择 `Next.js` 作为开发框架，并通过滑块调整项目所需的 CPU 核心数和内存大小。
 
-![Sealos Devbox 创建 Next.js 项目界面，显示框架选择和资源配置选项](./images/devbox-nextjs-framework.zh-cn.png)
+![Sealos DevBox 创建 Next.js 项目界面，显示框架选择和资源配置选项](./images/devbox-nextjs-framework.zh-cn.png)
 
 <h4>配置网络设置</h4>
 
-![Sealos Devbox 网络配置界面，展示端口设置和域名配置选项](./images/devbox-nextjs-network.zh-cn.png)
+![Sealos DevBox 网络配置界面，展示端口设置和域名配置选项](./images/devbox-nextjs-network.zh-cn.png)
 
 - 滚动到配置页面的 "网络配置" 部分。
 
@@ -48,7 +48,7 @@ description: 本指南介绍如何使用 Sealos Devbox 来创建、开发和部�
 
 项目创建完成后，你可以在项目列表中看到新建的项目。每个项目的 "操作" 栏都提供了多个便捷选项。
 
-![Sealos Devbox 项目列表操作界面，展示包含 Cursor IDE 和 VSCode 等开发工具选项](./images/devbox-list-operation.zh-cn.png)
+![Sealos DevBox 项目列表操作界面，展示包含 Cursor IDE 和 VSCode 等开发工具选项](./images/devbox-list-operation.zh-cn.png)
 
 <div className='steps [&_h4]:step'>
 
@@ -62,8 +62,8 @@ description: 本指南介绍如何使用 Sealos Devbox 来创建、开发和部�
 <h4>安装插件</h4>
 
 - 选择 `Cursor` 后，系统会自动启动本地的 Cursor IDE。
-- Cursor 会弹出提示窗口，引导你安装 Devbox 插件。
-- 该插件能让你通过 SSH 安全地连接到 Devbox 开发环境。
+- Cursor 会弹出提示窗口，引导你安装 DevBox 插件。
+- 该插件能让你通过 SSH 安全地连接到 DevBox 开发环境。
 - 按照提示完成插件安装，Cursor 将自动建立远程连接。
 
 </div>
@@ -78,10 +78,10 @@ description: 本指南介绍如何使用 Sealos Devbox 来创建、开发和部�
 
 <h4>访问项目文件</h4>
 
-![Cursor IDE 远程开发界面，展示连接到 Sealos Devbox 的项目文件结构](./images/cursor-remote-devbox.zh-cn.png)
+![Cursor IDE 远程开发界面，展示连接到 Sealos DevBox 的项目文件结构](./images/cursor-remote-devbox.zh-cn.png)
 
 通过远程连接，你可以在 Cursor IDE 中开发 Next.js 应用，同时获得以下优势：
-- 代码在 Devbox 环境中运行，确保开发和生产环境的一致性。
+- 代码在 DevBox 环境中运行，确保开发和生产环境的一致性。
 - 只需安装 Cursor，即可在任何设备上访问你的项目。
 - 团队成员可以连接到同一个开发环境，实现便捷协作。
 
@@ -99,10 +99,10 @@ description: 本指南介绍如何使用 Sealos Devbox 来创建、开发和部�
 
 - 切换到 Cursor 面板的 "Network" 标签页。
 - 点击地址栏右侧的 🌐 按钮。
-   ![Sealos Devbox 网络面板中的应用访问按钮界面](./images/devbox-nextjs-network-open.zh-cn.png)
+   ![Sealos DevBox 网络面板中的应用访问按钮界面](./images/devbox-nextjs-network-open.zh-cn.png)
 - 在弹窗中选择 "Open"，即可在浏览器中打开并测试运行中的应用。
 
-  ![运行在 Sealos Devbox 上的 Next.js 示例应用预览界面](./images/devbox-nextjs-demo.zh-cn.jpg)
+  ![运行在 Sealos DevBox 上的 Next.js 示例应用预览界面](./images/devbox-nextjs-demo.zh-cn.jpg)
 
 </div>
 
@@ -123,7 +123,7 @@ npm run build
 
 <h4>开始发布</h4>
 
-- 打开 Sealos Devbox 项目列表。
+- 打开 Sealos DevBox 项目列表。
 - 找到你的项目并点击 "详情" 按钮。
 - 在项目详情页面，找到 "版本历史" 区域。
 - 点击右上角的 "发布版本" 按钮。
@@ -135,7 +135,7 @@ npm run build
 - 版本号：输入版本号 (如：`v1.0`)。
 - 版本描述：简要说明本次发布内容 (如："首次发布" 或 "修复登录功能")。
 
-![Sealos Devbox OCI 镜像发布界面，包含版本和描述信息填写选项](./images/devbox-release-oci-image.zh-cn.png)
+![Sealos DevBox OCI 镜像发布界面，包含版本和描述信息填写选项](./images/devbox-release-oci-image.zh-cn.png)
 
 <h4>完成发布</h4>
 
@@ -143,7 +143,7 @@ npm run build
 - 系统会开始处理发布请求。
 - 完成后，新版本将出现在 "版本历史" 列表中，显示版本号、状态、创建时间和描述。
 
-![Sealos Devbox 版本列表界面，显示已发布的应用版本信息](./images/devbox-release-version-lists.zh-cn.png)
+![Sealos DevBox 版本列表界面，显示已发布的应用版本信息](./images/devbox-release-version-lists.zh-cn.png)
 
 </div>
 
@@ -174,7 +174,7 @@ npm run build
 - 配置必要的环境变量。
 - 根据需要设置存储卷。
 
-![Sealos Devbox 应用部署配置界面，展示资源和环境设置选项](./images/devbox-release-deploy.zh-cn.png)
+![Sealos DevBox 应用部署配置界面，展示资源和环境设置选项](./images/devbox-release-deploy.zh-cn.png)
 
 <h4>部署应用</h4>
 
@@ -183,16 +183,16 @@ npm run build
 - 当状态显示为 "running" 时，表示部署成功。
 - 点击 "公网地址" 下的访问地址，即可在浏览器中打开已部署的应用。
 
-![Sealos Devbox 应用部署成功界面，显示运行状态和访问地址](./images/devbox-release-deploy-success.zh-cn.png)
+![Sealos DevBox 应用部署成功界面，显示运行状态和访问地址](./images/devbox-release-deploy-success.zh-cn.png)
 
 </div>
 
 完成以上步骤后，你的 Next.js 应用就已经成功部署到 Sealos Cloud 平台，可以通过公网访问了。
 
 <Callout type="info">
-需要更新应用时，你可以随时在 Devbox 中发布新版本，在弹出的窗口中，你可以选择更新已部署的应用，也可以选择创建新应用。
+需要更新应用时，你可以随时在 DevBox 中发布新版本，在弹出的窗口中，你可以选择更新已部署的应用，也可以选择创建新应用。
 
-![Sealos Devbox 更新应用](./images/devbox-release-deploy-update.zh-cn.png)
+![Sealos DevBox 更新应用](./images/devbox-release-deploy-update.zh-cn.png)
 </Callout>
 
 通过这套完整的工作流程，你可以在云环境中便捷地开发和调试 Next.js 应用，同时继续使用习惯的本地开发工具。借助外部访问地址，你可以轻松地向团队成员或客户展示项目进展。只要能连接互联网，他们就能随时访问你的应用。

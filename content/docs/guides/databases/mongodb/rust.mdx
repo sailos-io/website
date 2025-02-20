@@ -1,13 +1,13 @@
 ---
 title: Rust
-description: Learn how to connect to MongoDB databases in Sealos Devbox using Rust
+description: Learn how to connect to MongoDB databases in Sealos DevBox using Rust
 ---
 
-This guide will walk you through the process of connecting to a MongoDB database using Rust within your Sealos Devbox project.
+This guide will walk you through the process of connecting to a MongoDB database using Rust within your Sealos DevBox project.
 
 ## Prerequisites
 
-- [A Sealos Devbox project](/docs/guides/fundamentals/create-a-project) with Rust environment
+- [A Sealos DevBox project](/docs/guides/fundamentals/create-a-project) with Rust environment
 - [A MongoDB database created using the Database app in Sealos](./)
 
 ## Install Required Dependencies
@@ -74,7 +74,7 @@ async fn main() -> mongodb::error::Result<()> {
     let mut client_options = ClientOptions::parse(mongodb_uri).await?;
  
     // Manually set an option
-    client_options.app_name = Some("Sealos Devbox Rust App".to_string());
+    client_options.app_name = Some("Sealos DevBox Rust App".to_string());
  
     // Get a handle to the deployment
     let client = Client::with_options(client_options)?;
@@ -148,7 +148,7 @@ If you encounter connection issues:
 
 1. Verify your MongoDB credentials in the `.env` file.
 2. Ensure your MongoDB database is running and accessible.
-3. Check for any network restrictions in your Devbox environment.
+3. Check for any network restrictions in your DevBox environment.
 4. Confirm that all required dependencies are correctly specified in your `Cargo.toml` file.
 
 For more detailed information on using MongoDB with Rust, refer to the [MongoDB Rust driver documentation](https://docs.rs/mongodb/latest/mongodb/).

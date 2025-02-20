@@ -1,6 +1,6 @@
 ---
 title: 发布版本
-description: 了解如何使用 Sealos Devbox 发布你的项目
+description: 了解如何使用 Sealos DevBox 发布你的项目
 ---
 
 完成应用程序的开发和测试后，接下来需要将其发布为 OCI (Open Container Initiative) 镜像。通过这个过程，你可以对应用程序进行版本管理，为后续部署做好准备。
@@ -28,7 +28,7 @@ description: 了解如何使用 Sealos Devbox 发布你的项目
 
 <h4>检查和更新 entrypoint.sh</h4>
 
-每个 Devbox 项目都有一个 `entrypoint.sh` 文件，其中包含了 OCI 镜像的启动命令。在发布前，请务必检查并在必要时更新此文件：
+每个 DevBox 项目都有一个 `entrypoint.sh` 文件，其中包含了 OCI 镜像的启动命令。在发布前，请务必检查并在必要时更新此文件：
 
 1. 在项目目录中打开 `entrypoint.sh` 文件
 2. 检查启动命令是否正确
@@ -68,7 +68,7 @@ chmod +x entrypoint.sh
 
 <h4>查看项目详情</h4>
 
-- 用浏览器打开 Sealos Devbox 列表
+- 用浏览器打开 Sealos DevBox 列表
 - 找到你的项目，点击右侧的“详情”按钮
 
 <h4>开始发版</h4>
@@ -84,7 +84,7 @@ chmod +x entrypoint.sh
 - **版本号**：输入发布版本号 (如：`v1.0`)
 - **说明**：简要描述本次发布内容 (如：“首次发布”或“新增用户认证功能”)
 
-![Sealos Devbox OCI 镜像发布界面，包含版本和描述信息填写选项](./images/devbox-release-oci-image.zh-cn.png)
+![Sealos DevBox OCI 镜像发布界面，包含版本和描述信息填写选项](./images/devbox-release-oci-image.zh-cn.png)
 
 <h4>完成发版</h4>
 
@@ -98,7 +98,7 @@ chmod +x entrypoint.sh
 - 发版创建时间
 - 你填写的版本说明
 
-![Sealos Devbox 版本列表界面，显示已发布的应用版本信息](./images/devbox-release-version-lists.zh-cn.png)
+![Sealos DevBox 版本列表界面，显示已发布的应用版本信息](./images/devbox-release-version-lists.zh-cn.png)
 
 </div>
 

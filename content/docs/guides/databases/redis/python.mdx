@@ -1,18 +1,18 @@
 ---
 title: Python
-description: Learn how to connect to Redis databases in Sealos Devbox using Python
+description: Learn how to connect to Redis databases in Sealos DevBox using Python
 ---
 
-This guide will walk you through the process of connecting to a Redis database using Python within your Sealos Devbox project.
+This guide will walk you through the process of connecting to a Redis database using Python within your Sealos DevBox project.
 
 ## Prerequisites
 
-- [A Sealos Devbox project](/docs/guides/fundamentals/create-a-project) with Python environment
+- [A Sealos DevBox project](/docs/guides/fundamentals/create-a-project) with Python environment
 - [A Redis database created using the Database app in Sealos](./)
 
 ## Activating the Python Environment
 
-Before you start, you need to activate the Python virtual environment in your Devbox. Open the terminal within Cursor IDE and run:
+Before you start, you need to activate the Python virtual environment in your DevBox. Open the terminal within Cursor IDE and run:
 
 ```bash
 source ./bin/activate
@@ -108,7 +108,7 @@ def main():
     if redis_conn:
         try:
             # String operations
-            set_value(redis_conn, "mykey", "Hello from Sealos Devbox!")
+            set_value(redis_conn, "mykey", "Hello from Sealos DevBox!")
             get_value(redis_conn, "mykey")
 
             # List operations

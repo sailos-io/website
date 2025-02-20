@@ -1,13 +1,13 @@
 ---
 title: Python
-description: 在 Sealos Devbox 中使用 Python 连接 Kafka 的详细指南
+description: 在 Sealos DevBox 中使用 Python 连接 Kafka 的详细指南
 ---
 
-本文将详细介绍如何在 Sealos Devbox 中使用 Python 连接和操作 Kafka 服务。
+本文将详细介绍如何在 Sealos DevBox 中使用 Python 连接和操作 Kafka 服务。
 
 ## 准备工作
 
-- [已创建并配置好 Python 环境的 Sealos Devbox 项目](/docs/guides/fundamentals/create-a-project)
+- [已创建并配置好 Python 环境的 Sealos DevBox 项目](/docs/guides/fundamentals/create-a-project)
 - [已通过 Sealos 数据库应用创建 Kafka 集群](./)
 
 ## 环境配置
@@ -109,7 +109,7 @@ def test_kafka_producer():
     producer = get_kafka_producer()
     if producer:
         topic = os.getenv('KAFKA_TOPIC')
-        message = "Hello from Sealos Devbox!"
+        message = "Hello from Sealos DevBox!"
         producer.send(topic, message.encode('utf-8'))
         producer.flush()
         print(f"Message sent to topic {topic}: {message}")

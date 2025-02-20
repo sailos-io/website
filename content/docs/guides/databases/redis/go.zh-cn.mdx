@@ -1,15 +1,15 @@
 ---
 title: Go
-description: 在 Sealos Devbox 中使用 Go 语言连接和操作 Redis 数据库的完整指南
+description: 在 Sealos DevBox 中使用 Go 语言连接和操作 Redis 数据库的完整指南
 ---
 
-本教程将详细介绍如何在 Sealos Devbox 开发环境中使用 Go 语言连接并操作 Redis 数据库。
+本教程将详细介绍如何在 Sealos DevBox 开发环境中使用 Go 语言连接并操作 Redis 数据库。
 
 ## 准备工作
 
 在开始之前，请确保您已经：
 
-- [创建并配置好 Go 开发环境的 Sealos Devbox 项目](/docs/guides/fundamentals/create-a-project)
+- [创建并配置好 Go 开发环境的 Sealos DevBox 项目](/docs/guides/fundamentals/create-a-project)
 - [在 Sealos 数据库应用中创建了 Redis 数据库实例](./)
 
 ## 安装依赖包
@@ -77,7 +77,7 @@ func main() {
 	}
 	fmt.Println("Connected to Redis: ", pong)
 	// Set a key
-	err = client.Set("mykey", "Hello from Sealos Devbox!", 0).Err()
+	err = client.Set("mykey", "Hello from Sealos DevBox!", 0).Err()
 	if err != nil {
 		log.Fatal("Could not set key: ", err)
 	}
@@ -145,7 +145,7 @@ go run main.go
 
 1. 确认 `.env` 文件中的 Redis 连接凭证是否正确
 2. 确保 Redis 数据库正在运行且可以访问
-3. 检查 Devbox 运行环境中是否存在网络限制
+3. 检查 DevBox 运行环境中是否存在网络限制
 4. 确认所需的软件包已正确安装。
 
 更多关于在 Go 中使用 Redis 的详细信息，请参考 [go-redis 官方文档](https://github.com/go-redis/redis)。

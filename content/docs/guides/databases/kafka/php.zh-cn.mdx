@@ -1,22 +1,22 @@
 ---
 title: PHP
-description: 在 Sealos Devbox 中使用 PHP 连接并操作 Kafka 的完整指南
+description: 在 Sealos DevBox 中使用 PHP 连接并操作 Kafka 的完整指南
 ---
 
-本指南将详细介绍如何在 Sealos Devbox 环境中使用 PHP 连接和操作 Kafka 消息队列服务。
+本指南将详细介绍如何在 Sealos DevBox 环境中使用 PHP 连接和操作 Kafka 消息队列服务。
 
 ## 准备工作
 
 在开始之前，请确保：
 
-- [已在 Sealos Devbox 中创建并配置好 PHP 开发环境](/docs/guides/fundamentals/create-a-project)
+- [已在 Sealos DevBox 中创建并配置好 PHP 开发环境](/docs/guides/fundamentals/create-a-project)
 - [已通过 Sealos 数据库应用成功创建 Kafka 集群](./)
 
 ## 环境配置
 
 ### 安装系统依赖
 
-首先，在 Devbox 运行环境的终端中安装必要的系统依赖：
+首先，在 DevBox 运行环境的终端中安装必要的系统依赖：
 
 ```bash
 sudo apt-get update
@@ -67,7 +67,7 @@ $producer = new RdKafka\Producer($conf);
 
 $topic = $producer->newTopic($config['topic']);
 
-$message = "Hello from Sealos Devbox!";
+$message = "Hello from Sealos DevBox!";
 $topic->produce(RD_KAFKA_PARTITION_UA, 0, $message);
 
 $producer->flush(10000);
@@ -116,7 +116,7 @@ while (true) {
 
 ## 运行程序
 
-在 Devbox 终端中运行生产者脚本：
+在 DevBox 终端中运行生产者脚本：
 
 ```bash
 php kafka_producer.php
@@ -144,7 +144,7 @@ php kafka_consumer.php
 
 1. 确认 `config.php` 中的 Kafka 服务地址配置正确
 2. 验证 Kafka 集群状态是否正常运行
-3. 检查 Devbox 环境的网络连接是否正常
+3. 检查 DevBox 环境的网络连接是否正常
 4. 确保 `rdkafka` 扩展已正确安装并启用
 
 更多关于 PHP 操作 Kafka 的详细信息，请参考 [php-rdkafka 官方文档](https://github.com/arnaud-lb/php-rdkafka)。

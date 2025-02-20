@@ -1,13 +1,13 @@
 ---
 title: 应用启动配置
-description: 了解如何配置 Devbox 项目的启动命令
+description: 了解如何配置 DevBox 项目的启动命令
 ---
 
-在 Sealos Devbox 中，`entrypoint.sh` 是一个特殊的脚本文件，它定义了你的应用在发布后的启动方式。本指南将帮助你理解如何正确配置这个文件，以确保你的应用能在部署环境中正确启动和运行。
+在 Sealos DevBox 中，`entrypoint.sh` 是一个特殊的脚本文件，它定义了你的应用在发布后的启动方式。本指南将帮助你理解如何正确配置这个文件，以确保你的应用能在部署环境中正确启动和运行。
 
 ## 什么是 entrypoint.sh
 
-在 Devbox 项目中，`entrypoint.sh` 是应用程序的入口点，它：
+在 DevBox 项目中，`entrypoint.sh` 是应用程序的入口点，它：
 
 - 定义了应用程序的启动命令
 - 在应用部署后自动执行
@@ -141,7 +141,7 @@ php -S 0.0.0.0:8000
 </div>
 
 <Callout type="warn">
-不要在 entrypoint.sh 中添加后台进程或守护进程。如果需要运行多个服务，应该创建多个 Devbox 项目分别部署。
+不要在 entrypoint.sh 中添加后台进程或守护进程。如果需要运行多个服务，应该创建多个 DevBox 项目分别部署。
 </Callout>
 
 ## 常见问题

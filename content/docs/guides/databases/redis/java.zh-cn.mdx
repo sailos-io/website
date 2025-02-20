@@ -1,15 +1,15 @@
 ---
 title: Java
-description: 在 Sealos Devbox 中使用 Java 连接并操作 Redis 数据库的完整指南
+description: 在 Sealos DevBox 中使用 Java 连接并操作 Redis 数据库的完整指南
 ---
 
-本教程将指导您如何在 Sealos Devbox 项目中使用 Java 语言连接和操作 Redis 数据库。我们将通过一个完整的示例项目，展示从环境配置到代码实现的全过程。
+本教程将指导您如何在 Sealos DevBox 项目中使用 Java 语言连接和操作 Redis 数据库。我们将通过一个完整的示例项目，展示从环境配置到代码实现的全过程。
 
 ## 准备工作
 
 在开始之前，请确保您已经：
 
-- [创建并配置好 Java 运行环境的 Sealos Devbox 项目](/docs/guides/fundamentals/create-a-project)
+- [创建并配置好 Java 运行环境的 Sealos DevBox 项目](/docs/guides/fundamentals/create-a-project)
 - [在 Sealos 数据库应用中完成 Redis 数据库的创建与配置](./)
 
 ## 项目配置
@@ -18,7 +18,7 @@ description: 在 Sealos Devbox 中使用 Java 连接并操作 Redis 数据库的
 
 #### 创建项目
 
-首先，在 Sealos Devbox 终端中执行以下命令来初始化一个新的 Maven 项目：
+首先，在 Sealos DevBox 终端中执行以下命令来初始化一个新的 Maven 项目：
 
 ```bash
 mvn archetype:generate -DgroupId=com.example -DartifactId=redis-java-example -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
@@ -170,7 +170,7 @@ redis.password=your_redis_password
                System.out.println("Connected to Redis");
    
                // String operations
-               jedis.set("mykey", "Hello from Sealos Devbox!");
+               jedis.set("mykey", "Hello from Sealos DevBox!");
                String value = jedis.get("mykey");
                System.out.println("Retrieved value: " + value);
    
@@ -309,13 +309,13 @@ java -jar target/redis-java-example-1.0-SNAPSHOT.jar
 如果遇到连接问题，请按以下步骤排查：
 
 1. 检查 `redis.properties` 中的连接信息是否正确
-2. 确认 Redis 数据库服务是否正常运行，且可以从 Devbox 环境访问
-3. 检查 Devbox 环境的网络配置是否有限制
+2. 确认 Redis 数据库服务是否正常运行，且可以从 DevBox 环境访问
+3. 检查 DevBox 环境的网络配置是否有限制
 4. 验证 `pom.xml` 中的 Jedis 依赖配置是否正确
 5. 确保使用的 Java 版本符合要求 (本示例使用 OpenJDK 17)
 
 ## 总结
 
-本教程详细介绍了如何在 Sealos Devbox 环境中使用 Java 连接和操作 Redis 数据库。我们通过一个完整的示例项目，展示了从环境配置、代码实现到最终运行的全过程。同时提供了实用的开发建议和问题排查指南，帮助您快速构建可靠的 Java Redis 应用。
+本教程详细介绍了如何在 Sealos DevBox 环境中使用 Java 连接和操作 Redis 数据库。我们通过一个完整的示例项目，展示了从环境配置、代码实现到最终运行的全过程。同时提供了实用的开发建议和问题排查指南，帮助您快速构建可靠的 Java Redis 应用。
 
 如需了解更多 Java Redis 开发相关内容，请参考 [Jedis 官方文档](https://github.com/redis/jedis)。

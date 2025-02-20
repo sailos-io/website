@@ -1,13 +1,13 @@
 ---
 title: Rust
-description: 在 Sealos Devbox 中使用 Rust 连接 Redis 数据库的完整指南
+description: 在 Sealos DevBox 中使用 Rust 连接 Redis 数据库的完整指南
 ---
 
-本教程将指导您如何在 Sealos Devbox 项目中使用 Rust 语言连接和操作 Redis 数据库。
+本教程将指导您如何在 Sealos DevBox 项目中使用 Rust 语言连接和操作 Redis 数据库。
 
 ## 准备工作
 
-- [已创建并配置好 Rust 开发环境的 Sealos Devbox 项目](/docs/guides/fundamentals/create-a-project)
+- [已创建并配置好 Rust 开发环境的 Sealos DevBox 项目](/docs/guides/fundamentals/create-a-project)
 - [已在 Sealos 数据库应用中创建的 Redis 实例](./)
 
 ## 安装依赖
@@ -68,7 +68,7 @@ fn main() -> redis::RedisResult<()> {
     let mut con = client.get_connection()?;
 
     // Set a key
-    let _: () = con.set("my_key", "Hello from Sealos Devbox!")?;
+    let _: () = con.set("my_key", "Hello from Sealos DevBox!")?;
 
     // Get a key
     let value: String = con.get("my_key")?;
@@ -129,7 +129,7 @@ cargo run
 
 1. 确认 `.env` 文件中的 Redis 连接信息是否正确。
 2. 验证 Redis 实例是否正常运行且可以访问。
-3. 检查 Devbox 环境的网络连接是否正常。
+3. 检查 DevBox 环境的网络连接是否正常。
 4. 确保 `Cargo.toml` 中的依赖项配置正确且完整。
 
 更多关于 Rust 操作 Redis 的详细信息，请参阅 [redis-rs 官方文档](https://docs.rs/redis/latest/redis/)。

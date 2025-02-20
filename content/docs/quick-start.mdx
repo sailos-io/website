@@ -7,13 +7,13 @@ description: Learn how to create, develop, and deploy a Next.js app using Sealos
 
 Sealos DevBox is an all-in-one platform designed for integrated online development, testing, and production. It offers a seamless solution for creating environments and database dependencies with just a single click, allows developers to work locally using their preferred IDEs while streamlining setup processes and enabling automatic application deployment.
 
-**In this guide We'll demonstrate how to how to create a minimal Next.js demo project with Sealos Devbox.**
+**In this guide We'll demonstrate how to how to create a minimal Next.js demo project with Sealos DevBox.**
 
-## Create a Devbox Project
+## Create a DevBox Project
 
 <div className='steps [&_h5]:step'>
 
-<h5>Click on the "Devbox" icon on [Sealos Desktop](https://usw.sealos.io), then click on the "Create New Project" button to create a new project.</h5>
+<h5>Click on the "DevBox" icon on [Sealos Desktop](https://usw.sealos.io), then click on the "Create New Project" button to create a new project.</h5>
 
 <h5>In the "Runtime" section, choose "Next.js" as the development framework. Use the sliders to set the CPU cores and memory for the project.</h5>
 
@@ -30,7 +30,7 @@ Sealos DevBox is an all-in-one platform designed for integrated online developme
       - If you need additional ports, click the "Add Port" button and specify them.
     
     - Enable Internet Access:
-      - Toggle the switch to enable internet access for your Devbox. This allows external users to access your Next.js application through the public internet using the provided domain.
+      - Toggle the switch to enable internet access for your DevBox. This allows external users to access your Next.js application through the public internet using the provided domain.
     
     - Domain:
       - By default, Sealos provides a subdomain for your application.
@@ -44,23 +44,23 @@ Sealos DevBox is an all-in-one platform designed for integrated online developme
 
 ## Connect with Cursor IDE
 
-After creating your project, you'll see it listed in the Devbox List. Each project has an "Operation" column with various options.
+After creating your project, you'll see it listed in the DevBox List. Each project has an "Operation" column with various options.
 
 ![](./images/devbox-list-operation.png)
 
 <div className='steps [&_h5]:step'>
 
-<h5>To connect to your project's Devbox runtime using Cursor IDE:</h5>
+<h5>To connect to your project's DevBox runtime using Cursor IDE:</h5>
 
-    - Locate your project in the Devbox List.
+    - Locate your project in the DevBox List.
     - In the "Operation" column, click on the dropdown arrow next to the VSCode icon.
     - From the dropdown menu, select "Cursor".
     - Click on the "Cursor" option that appears.
 
-<h5>When you click on "Cursor", it will launch the Cursor IDE application on your local machine. Within Cursor, a popup window will appear, prompting you to install the Devbox plugin for Cursor. This plugin enables SSH remote connection to the Devbox runtime.</h5>
+<h5>When you click on "Cursor", it will launch the Cursor IDE application on your local machine. Within Cursor, a popup window will appear, prompting you to install the DevBox plugin for Cursor. This plugin enables SSH remote connection to the DevBox runtime.</h5>
 
-    - Follow the instructions in the Cursor popup to install the Devbox plugin.
-    - Once installed, Cursor will establish a remote connection to your Devbox runtime.
+    - Follow the instructions in the Cursor popup to install the DevBox plugin.
+    - Once installed, Cursor will establish a remote connection to your DevBox runtime.
 
 </div>
 
@@ -77,9 +77,9 @@ After creating your project, you'll see it listed in the Devbox List. Each proje
     ![](./images/cursor-remote-devbox.png)
 
    This remote connection allows you to develop your Next.js application using Cursor IDE, with all the benefits of a cloud-based development environment:
-    - Your code runs in the Devbox runtime, ensuring consistency across development and production environments.
+    - Your code runs in the DevBox runtime, ensuring consistency across development and production environments.
     - You can access your project from anywhere, on any device with Cursor installed.
-    - Collaboration becomes easier as team members can connect to the same Devbox runtime.
+    - Collaboration becomes easier as team members can connect to the same DevBox runtime.
 
 <h5>You can start debugging your Next.js application:</h5>
 
@@ -93,7 +93,7 @@ After creating your project, you'll see it listed in the Devbox List. Each proje
 
 <h5>To access your running application:</h5>
 
-    - Return to the Sealos Devbox List in your browser.
+    - Return to the Sealos DevBox List in your browser.
     - Find the project you just created.
     - Click on the "Detail" button on the right side of your project's row.
 
@@ -121,7 +121,7 @@ After you've developed and tested your Next.js application, you can release it a
    This command creates a production-ready build of your Next.js application in the '.next' directory.
 
 2. Navigate to your project's details page:
-   - Go to the Sealos Devbox List in your browser.
+   - Go to the Sealos DevBox List in your browser.
    - Find your project and click on the "Detail" button on the right side of your project's row.
 
 3. On the project details page, look for the "Version" section.
@@ -176,7 +176,7 @@ After releasing your Next.js application as an OCI image, you can deploy it to S
 By following these steps, you've successfully deployed your Next.js application to Sealos Cloud using the App Launchpad application. Your application is now accessible via the public address, allowing users to interact with it from anywhere on the internet.
 
 <Callout type="info">
-  You can always update your application by creating a new release in Devbox and repeating this deployment process with the new version using App Launchpad.
+  You can always update your application by creating a new release in DevBox and repeating this deployment process with the new version using App Launchpad.
 </Callout>
 
 This workflow allows you to develop and debug your Next.js application in a cloud environment while still using your preferred local IDE. The external address makes it easy to share your work with team members or clients, as they can access your running application from anywhere with an internet connection.

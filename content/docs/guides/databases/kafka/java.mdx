@@ -1,13 +1,13 @@
 ---
 title: Java
-description: Learn how to connect to Kafka in Sealos Devbox using Java
+description: Learn how to connect to Kafka in Sealos DevBox using Java
 ---
 
-This guide will walk you through the process of connecting to Kafka using Java within your Sealos Devbox project.
+This guide will walk you through the process of connecting to Kafka using Java within your Sealos DevBox project.
 
 ## Prerequisites
 
-- [A Sealos Devbox project](/docs/guides/fundamentals/create-a-project) with Java environment
+- [A Sealos DevBox project](/docs/guides/fundamentals/create-a-project) with Java environment
 - [A Kafka cluster created using the Database app in Sealos](./)
 
 ## Project Setup
@@ -16,7 +16,7 @@ This guide will walk you through the process of connecting to Kafka using Java w
 
 #### Create a new Maven project
 
-In your Sealos Devbox terminal, initialize a new Maven project:
+In your Sealos DevBox terminal, initialize a new Maven project:
 
 ```bash
 mvn archetype:generate -DgroupId=com.example -DartifactId=kafka-java-example -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
@@ -134,7 +134,7 @@ public class KafkaProducerExample {
         Producer<String, String> producer = new KafkaProducer<>(props);
 
         String topic = props.getProperty("topic");
-        String message = "Hello from Sealos Devbox!";
+        String message = "Hello from Sealos DevBox!";
 
         ProducerRecord<String, String> record = new ProducerRecord<>(topic, message);
 
@@ -248,8 +248,8 @@ Run the producer and consumer in separate terminal windows to see the message be
 If you encounter connection issues:
 
 1. Verify your Kafka credentials in the `kafka.properties` file.
-2. Ensure your Kafka cluster is running and accessible from your Devbox environment.
-3. Check for any network restrictions in your Devbox environment.
+2. Ensure your Kafka cluster is running and accessible from your DevBox environment.
+3. Check for any network restrictions in your DevBox environment.
 4. Confirm that all required dependencies are correctly specified in your `pom.xml` file.
 
 For more detailed information on using Kafka with Java, refer to the [Apache Kafka documentation](https://kafka.apache.org/documentation/).

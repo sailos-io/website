@@ -1,15 +1,15 @@
 ---
 title: Rust
-description: 在 Sealos Devbox 中使用 Rust 连接 Kafka 的完整指南
+description: 在 Sealos DevBox 中使用 Rust 连接 Kafka 的完整指南
 ---
 
-本文将详细介绍如何在 Sealos Devbox 项目中使用 Rust 语言连接和操作 Kafka 消息队列服务。
+本文将详细介绍如何在 Sealos DevBox 项目中使用 Rust 语言连接和操作 Kafka 消息队列服务。
 
 ## 前置条件
 
 在开始之前，请确保：
 
-- [已创建并正确配置 Rust 开发环境的 Sealos Devbox 项目](/docs/guides/fundamentals/create-a-project)
+- [已创建并正确配置 Rust 开发环境的 Sealos DevBox 项目](/docs/guides/fundamentals/create-a-project)
 - [已通过 Sealos 数据库应用成功部署 Kafka 集群](./)
 
 ## 配置开发环境
@@ -77,7 +77,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let delivery_status = producer
         .send(
             FutureRecord::to(&topic)
-                .payload("Hello from Sealos Devbox!")
+                .payload("Hello from Sealos DevBox!")
                 .key("key"),
             Duration::from_secs(0),
         )
@@ -154,8 +154,8 @@ cargo run
 如果遇到连接问题，请按以下步骤排查：
 
 1. 验证 `.env` 文件中的 Kafka broker 地址是否正确
-2. 确认 Kafka 集群状态是否正常，并且可以从 Devbox 环境访问
-3. 检查 Devbox 环境的网络连接和限制
+2. 确认 Kafka 集群状态是否正常，并且可以从 DevBox 环境访问
+3. 检查 DevBox 环境的网络连接和限制
 4. 确保 `Cargo.toml` 中的依赖配置准确无误
 
 更多关于 Rust 操作 Kafka 的详细信息，请参考 [rdkafka 官方文档](https://docs.rs/rdkafka)。

@@ -1,20 +1,20 @@
 ---
 title: Python
-description: 在 Sealos Devbox 中使用 Python 连接 Redis 数据库的完整指南
+description: 在 Sealos DevBox 中使用 Python 连接 Redis 数据库的完整指南
 ---
 
-本教程将指导您如何在 Sealos Devbox 项目中使用 Python 连接和操作 Redis 数据库。
+本教程将指导您如何在 Sealos DevBox 项目中使用 Python 连接和操作 Redis 数据库。
 
 ## 准备工作
 
 在开始之前，请确保：
 
-- [已创建并配置好 Python 开发环境的 Sealos Devbox 项目](/docs/guides/fundamentals/create-a-project)
+- [已创建并配置好 Python 开发环境的 Sealos DevBox 项目](/docs/guides/fundamentals/create-a-project)
 - [已在 Sealos 数据库应用中创建 Redis 数据库实例](./)
 
 ## 激活 Python 环境
 
-首先，我们需要在 Devbox 中激活 Python 虚拟环境。打开 Cursor IDE 的终端，执行相应的激活命令：
+首先，我们需要在 DevBox 中激活 Python 虚拟环境。打开 Cursor IDE 的终端，执行相应的激活命令：
 
 ```bash
 source ./bin/activate
@@ -110,7 +110,7 @@ def main():
     if redis_conn:
         try:
             # String operations
-            set_value(redis_conn, "mykey", "Hello from Sealos Devbox!")
+            set_value(redis_conn, "mykey", "Hello from Sealos DevBox!")
             get_value(redis_conn, "mykey")
 
             # List operations
